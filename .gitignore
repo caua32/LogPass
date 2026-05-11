@@ -1,0 +1,36 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/pubspec.lock
+**/.pub-cache/
+**/.pub/
+**/ios/Pods/
+**/android/.gradle/
+**/android/local.properties
+**/android/captures/
+**/*.iml
+**/*.class
+**/.gradle/
+
+# Android Studio / IntelliJ
+**/.idea/
+**/*.iml
+**/local.properties
+
+# VS Code
+**/.vscode/
+
+# Environment
+**/.env
+**/.env.*
+
+# OS
+.DS_Store
+Thumbs.db
