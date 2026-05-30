@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/api_service.dart';
@@ -66,7 +66,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
     } catch (_) {
       if (mounted) {
         setState(() => _loading = false);
-        _showMsg('Não foi possível conectar ao servidor.', isError: true);
+        _showMsg('NÃ£o foi possÃ­vel conectar ao servidor.', isError: true);
       }
     }
   }
@@ -79,7 +79,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
         const SizedBox(width: 8),
         Expanded(child: Text(msg)),
       ]),
-      backgroundColor: isError ? const Color(0xFFFF6B6B) : const Color(0xFF4CE0D2),
+      backgroundColor: isError ? const Color(0xFFFF6B6B) : const Color(0xFF44CABD),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ));
@@ -107,7 +107,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
           SafeArea(
             child: Column(
               children: [
-                // Botão voltar
+                // BotÃ£o voltar
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
@@ -117,13 +117,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                       child: Container(
                         width: 36, height: 36,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+                          color: const Color(0xFF44CABD).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                              color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
+                              color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
                         ),
                         child: const Icon(Icons.arrow_back_ios_new,
-                            color: Color(0xFF4CE0D2), size: 16),
+                            color: Color(0xFF44CABD), size: 16),
                       ),
                     ),
                   ),
@@ -143,25 +143,25 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                               Container(
                                 width: 90, height: 90,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+                                  color: const Color(0xFF44CABD).withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(22),
                                   border: Border.all(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+                                    color: const Color(0xFF44CABD).withValues(alpha: 0.5),
                                     width: 1.5,
                                   ),
                                   boxShadow: [BoxShadow(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.3),
+                                    color: const Color(0xFF44CABD).withValues(alpha: 0.3),
                                     blurRadius: 24, spreadRadius: 3,
                                   )],
                                 ),
                                 child: const Icon(Icons.admin_panel_settings,
-                                    size: 44, color: Color(0xFF4CE0D2)),
+                                    size: 44, color: Color(0xFF44CABD)),
                               ),
                               const SizedBox(height: 18),
                               const Text('LogPass', style: TextStyle(
                                 fontSize: 28, fontWeight: FontWeight.bold,
-                                color: Color(0xFF4CE0D2), letterSpacing: 2,
-                                shadows: [Shadow(color: Color(0xFF4CE0D2), blurRadius: 12)],
+                                color: Color(0xFF44CABD), letterSpacing: 2,
+                                shadows: [Shadow(color: Color(0xFF44CABD), blurRadius: 12)],
                               )),
                               const SizedBox(height: 8),
                               Container(
@@ -170,11 +170,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                   color: const Color(0xFF102A43),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.4)),
+                                      color: const Color(0xFF44CABD).withValues(alpha: 0.4)),
                                 ),
                                 child: const Text('PAINEL ADMINISTRATIVO', style: TextStyle(
                                   fontSize: 10, fontWeight: FontWeight.bold,
-                                  color: Color(0xFF4CE0D2), letterSpacing: 2,
+                                  color: Color(0xFF44CABD), letterSpacing: 2,
                                 )),
                               ),
                             ]),
@@ -196,7 +196,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                     color: const Color(0xFF0D2137).withValues(alpha: 0.88),
                                     borderRadius: BorderRadius.circular(18),
                                     border: Border.all(
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.18),
+                                      color: const Color(0xFF44CABD).withValues(alpha: 0.18),
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -205,7 +205,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                         offset: const Offset(0, 16),
                                       ),
                                       BoxShadow(
-                                        color: const Color(0xFF4CE0D2).withValues(alpha: 0.06),
+                                        color: const Color(0xFF44CABD).withValues(alpha: 0.06),
                                         blurRadius: 40,
                                         spreadRadius: 4,
                                       ),
@@ -214,16 +214,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                   child: Column(children: [
                                     const Text('Acesso Restrito', style: TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.bold,
-                                      color: Color(0xFF4CE0D2), letterSpacing: 0.5,
+                                      color: Color(0xFF44CABD), letterSpacing: 0.5,
                                     )),
                                     const SizedBox(height: 4),
                                     Text('Apenas administradores autorizados',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.55),
+                                          color: const Color(0xFF44CABD).withValues(alpha: 0.55),
                                         )),
                                     const SizedBox(height: 22),
-                                    _buildField('Email / Usuário', _userCtrl,
+                                    _buildField('Email / UsuÃ¡rio', _userCtrl,
                                         Icons.person_outline),
                                     const SizedBox(height: 14),
                                     _buildField('Senha', _senhaCtrl, Icons.lock_outline,
@@ -233,7 +233,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                             _obscure
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
+                                            color: const Color(0xFF44CABD).withValues(alpha: 0.7),
                                             size: 20,
                                           ),
                                           onPressed: () => setState(() => _obscure = !_obscure),
@@ -245,7 +245,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                       child: ElevatedButton(
                                         onPressed: _loading ? null : _login,
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF4CE0D2),
+                                          backgroundColor: const Color(0xFF44CABD),
                                           foregroundColor: const Color(0xFF0A1929),
                                           shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(8)),
@@ -285,7 +285,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.8),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.8),
           fontSize: 12, letterSpacing: 0.5,
         )),
         const SizedBox(height: 6),
@@ -293,26 +293,26 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
           controller: ctrl,
           obscureText: obscure,
           onSubmitted: (_) => _login(),
-          style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 14),
+          style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xFF0A1929).withValues(alpha: 0.7),
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             prefixIcon: Icon(icon,
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.6), size: 18),
+                color: const Color(0xFF44CABD).withValues(alpha: 0.6), size: 18),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+              borderSide: BorderSide(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+              borderSide: BorderSide(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF4CE0D2), width: 1.5),
+              borderSide: const BorderSide(color: Color(0xFF44CABD), width: 1.5),
             ),
           ),
         ),

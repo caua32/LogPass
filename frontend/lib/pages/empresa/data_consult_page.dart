@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -82,12 +82,12 @@ class _DataConsultPageState extends State<DataConsultPage> {
       body: Column(children: [
         AppHeader(
           title: 'Consulta de Dados',
-          subtitle: 'Reclamações recebidas',
+          subtitle: 'ReclamaÃ§Ãµes recebidas',
           icon: Icons.inventory_2_outlined,
           actions: [
             IconButton(
               onPressed: _load,
-              icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2), size: 20),
+              icon: const Icon(Icons.refresh, color: Color(0xFF44CABD), size: 20),
               tooltip: 'Atualizar',
             ),
           ],
@@ -102,17 +102,17 @@ class _DataConsultPageState extends State<DataConsultPage> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF102A43),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+                  border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(children: [
                       Icon(Icons.filter_alt_outlined,
-                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.7), size: 16),
+                          color: const Color(0xFF44CABD).withValues(alpha: 0.7), size: 16),
                       const SizedBox(width: 6),
                       Text('Filtros', style: TextStyle(
-                        color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
+                        color: const Color(0xFF44CABD).withValues(alpha: 0.7),
                         fontSize: 12, letterSpacing: 0.5,
                       )),
                     ]),
@@ -120,8 +120,8 @@ class _DataConsultPageState extends State<DataConsultPage> {
                     Row(children: [
                       Expanded(flex: 3, child: TextField(
                         controller: _searchCtrl,
-                        style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 13),
-                        decoration: appInputDeco('Buscar por título ou descrição...',
+                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 13),
+                        decoration: appInputDeco('Buscar por tÃ­tulo ou descriÃ§Ã£o...',
                             prefixIcon: Icons.search).copyWith(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         ),
@@ -132,21 +132,21 @@ class _DataConsultPageState extends State<DataConsultPage> {
                         decoration: BoxDecoration(
                           color: const Color(0xFF0A1929).withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+                          border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
                         ),
                         child: DropdownButton<String>(
                           value: _filtroStatus,
                           dropdownColor: const Color(0xFF102A43),
                           isExpanded: true,
                           underline: const SizedBox.shrink(),
-                          style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 13),
-                          iconEnabledColor: const Color(0xFF4CE0D2),
+                          style: const TextStyle(color: Color(0xFF44CABD), fontSize: 13),
+                          iconEnabledColor: const Color(0xFF44CABD),
                           items: const [
                             DropdownMenuItem(value: 'todos', child: Text('Todos')),
                             DropdownMenuItem(value: '1', child: Text('Pendente')),
-                            DropdownMenuItem(value: '2', child: Text('Em Análise')),
+                            DropdownMenuItem(value: '2', child: Text('Em AnÃ¡lise')),
                             DropdownMenuItem(value: '3', child: Text('Resolvida')),
-                            DropdownMenuItem(value: '4', child: Text('Não Resolvida')),
+                            DropdownMenuItem(value: '4', child: Text('NÃ£o Resolvida')),
                           ],
                           onChanged: (v) {
                             setState(() => _filtroStatus = v ?? 'todos');
@@ -164,13 +164,13 @@ class _DataConsultPageState extends State<DataConsultPage> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF102A43),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+                  border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
                 ),
                 child: _loading
                     ? const Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator(
-                            color: Color(0xFF4CE0D2), strokeWidth: 2)),
+                            color: Color(0xFF44CABD), strokeWidth: 2)),
                       )
                     : _error != null
                         ? Padding(
@@ -180,8 +180,8 @@ class _DataConsultPageState extends State<DataConsultPage> {
                         : _filtradas.isEmpty
                             ? const Padding(
                                 padding: EdgeInsets.all(32),
-                                child: Center(child: Text('Nenhuma reclamação encontrada.',
-                                    style: TextStyle(color: Color(0xFF4CE0D2)))),
+                                child: Center(child: Text('Nenhuma reclamaÃ§Ã£o encontrada.',
+                                    style: TextStyle(color: Color(0xFF44CABD)))),
                               )
                             : Column(children: [
                                 Padding(
@@ -191,21 +191,21 @@ class _DataConsultPageState extends State<DataConsultPage> {
                                     children: [
                                       Text('${_filtradas.length} resultado${_filtradas.length != 1 ? 's' : ''}',
                                           style: TextStyle(
-                                            color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                                            color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                                             fontSize: 12,
                                           )),
-                                      Text('Pág. $_page/$_totalPages',
+                                      Text('PÃ¡g. $_page/$_totalPages',
                                           style: TextStyle(
-                                            color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                                            color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                                             fontSize: 12,
                                           )),
                                     ],
                                   ),
                                 ),
-                                const Divider(color: Color(0xFF4CE0D2), height: 1),
+                                const Divider(color: Color(0xFF44CABD), height: 1),
                                 ..._paginadas.map(_buildRow),
                                 if (_totalPages > 1) ...[
-                                  const Divider(color: Color(0xFF4CE0D2), height: 1),
+                                  const Divider(color: Color(0xFF44CABD), height: 1),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                     child: Row(
@@ -215,7 +215,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
                                             _page > 1 ? () => setState(() => _page--) : null),
                                         const SizedBox(width: 16),
                                         Text('$_page / $_totalPages', style: const TextStyle(
-                                          color: Color(0xFF4CE0D2), fontSize: 13,
+                                          color: Color(0xFF44CABD), fontSize: 13,
                                         )),
                                         const SizedBox(width: 16),
                                         _pageBtn(Icons.chevron_right,
@@ -239,28 +239,28 @@ class _DataConsultPageState extends State<DataConsultPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.1),
         )),
       ),
       child: Row(children: [
         SizedBox(
           width: 36,
           child: Text('#${r.id}', style: TextStyle(
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+            color: const Color(0xFF44CABD).withValues(alpha: 0.5),
             fontSize: 11, fontWeight: FontWeight.bold,
           )),
         ),
         Expanded(
           flex: 3,
           child: Text(r.titulo, style: const TextStyle(
-            color: Color(0xFF4CE0D2), fontSize: 13, fontWeight: FontWeight.w500,
+            color: Color(0xFF44CABD), fontSize: 13, fontWeight: FontWeight.w500,
           ), overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
         Expanded(
           flex: 2,
           child: Text(r.nomeConsumidor ?? '-', style: TextStyle(
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.65), fontSize: 12,
+            color: const Color(0xFF44CABD).withValues(alpha: 0.65), fontSize: 12,
           ), overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
@@ -281,12 +281,12 @@ class _DataConsultPageState extends State<DataConsultPage> {
           child: Container(
             width: 30, height: 30,
             decoration: BoxDecoration(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+              border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
             ),
             child: const Icon(Icons.chat_bubble_outline,
-                color: Color(0xFF4CE0D2), size: 15),
+                color: Color(0xFF44CABD), size: 15),
           ),
         ),
       ]),
@@ -300,19 +300,19 @@ class _DataConsultPageState extends State<DataConsultPage> {
         width: 32, height: 32,
         decoration: BoxDecoration(
           color: onTap != null
-              ? const Color(0xFF4CE0D2).withValues(alpha: 0.12)
-              : const Color(0xFF4CE0D2).withValues(alpha: 0.04),
+              ? const Color(0xFF44CABD).withValues(alpha: 0.12)
+              : const Color(0xFF44CABD).withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: onTap != null
-                ? const Color(0xFF4CE0D2).withValues(alpha: 0.4)
-                : const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+                ? const Color(0xFF44CABD).withValues(alpha: 0.4)
+                : const Color(0xFF44CABD).withValues(alpha: 0.1),
           ),
         ),
         child: Icon(icon,
             color: onTap != null
-                ? const Color(0xFF4CE0D2)
-                : const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+                ? const Color(0xFF44CABD)
+                : const Color(0xFF44CABD).withValues(alpha: 0.25),
             size: 18),
       ),
     );

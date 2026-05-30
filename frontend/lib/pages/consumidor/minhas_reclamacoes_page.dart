@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -52,7 +52,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
     } on ApiException catch (e) {
       setState(() { _error = e.message; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Erro ao carregar solicitações.'; _loading = false; });
+      setState(() { _error = 'Erro ao carregar solicitaÃ§Ãµes.'; _loading = false; });
     }
   }
 
@@ -66,13 +66,13 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'Minhas Solicitações',
-            subtitle: 'Histórico e acompanhamento',
+            title: 'Minhas SolicitaÃ§Ãµes',
+            subtitle: 'HistÃ³rico e acompanhamento',
             icon: Icons.list_alt_outlined,
             actions: [
               IconButton(
                 onPressed: _load,
-                icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2), size: 20),
+                icon: const Icon(Icons.refresh, color: Color(0xFF44CABD), size: 20),
                 tooltip: 'Atualizar',
               ),
             ],
@@ -80,7 +80,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator(
-                    color: Color(0xFF4CE0D2), strokeWidth: 2))
+                    color: Color(0xFF44CABD), strokeWidth: 2))
                 : _error != null
                     ? _buildError()
                     : _reclamacoes.isEmpty
@@ -104,7 +104,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
         TextButton(
           onPressed: _load,
           child: const Text('Tentar novamente',
-              style: TextStyle(color: Color(0xFF4CE0D2))),
+              style: TextStyle(color: Color(0xFF44CABD))),
         ),
       ],
     ));
@@ -117,26 +117,26 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
         Container(
           width: 80, height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+            color: const Color(0xFF44CABD).withValues(alpha: 0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
+            border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
           ),
-          child: const Icon(Icons.inbox_outlined, size: 42, color: Color(0xFF4CE0D2)),
+          child: const Icon(Icons.inbox_outlined, size: 42, color: Color(0xFF44CABD)),
         ),
         const SizedBox(height: 16),
-        const Text('Nenhuma solicitação', style: TextStyle(
-          fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
+        const Text('Nenhuma solicitaÃ§Ã£o', style: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
         )),
         const SizedBox(height: 6),
-        Text('Você ainda não abriu nenhuma solicitação.', style: TextStyle(
-          fontSize: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+        Text('VocÃª ainda nÃ£o abriu nenhuma solicitaÃ§Ã£o.', style: TextStyle(
+          fontSize: 13, color: const Color(0xFF44CABD).withValues(alpha: 0.6),
         )),
         const SizedBox(height: 20),
         TextButton.icon(
           onPressed: () => context.push('/nova-reclamacao'),
-          icon: const Icon(Icons.add_circle_outline, size: 16, color: Color(0xFF4CE0D2)),
-          label: const Text('Abrir nova solicitação',
-              style: TextStyle(color: Color(0xFF4CE0D2))),
+          icon: const Icon(Icons.add_circle_outline, size: 16, color: Color(0xFF44CABD)),
+          label: const Text('Abrir nova solicitaÃ§Ã£o',
+              style: TextStyle(color: Color(0xFF44CABD))),
         ),
       ],
     ));
@@ -152,14 +152,14 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+                  color: const Color(0xFF44CABD).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
+                  border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  '${_reclamacoes.length} solicitaç${_reclamacoes.length != 1 ? 'ões' : 'ão'}',
+                  '${_reclamacoes.length} solicitaÃ§${_reclamacoes.length != 1 ? 'Ãµes' : 'Ã£o'}',
                   style: const TextStyle(
-                    color: Color(0xFF4CE0D2), fontSize: 12, fontWeight: FontWeight.bold,
+                    color: Color(0xFF44CABD), fontSize: 12, fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -217,7 +217,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Expanded(
                     child: Text(r.titulo, style: const TextStyle(
-                      color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 14,
+                      color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 14,
                     ), overflow: TextOverflow.ellipsis),
                   ),
                   const SizedBox(width: 8),
@@ -237,11 +237,11 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                   const SizedBox(height: 6),
                   Row(children: [
                     Icon(Icons.business_outlined,
-                        size: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.5)),
+                        size: 13, color: const Color(0xFF44CABD).withValues(alpha: 0.5)),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(r.nomeEmpresa!, style: TextStyle(
-                        fontSize: 12, color: const Color(0xFF4CE0D2).withValues(alpha: 0.65),
+                        fontSize: 12, color: const Color(0xFF44CABD).withValues(alpha: 0.65),
                       ), overflow: TextOverflow.ellipsis),
                     ),
                   ]),
@@ -249,7 +249,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                 const SizedBox(height: 8),
                 Text(r.descricao, maxLines: 1, overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+                      color: const Color(0xFF44CABD).withValues(alpha: 0.5),
                       fontSize: 11,
                     )),
                 const SizedBox(height: 10),
@@ -261,18 +261,18 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+                          color: const Color(0xFF44CABD).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+                          border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.chat_bubble_outline,
-                                color: Color(0xFF4CE0D2), size: 13),
+                                color: Color(0xFF44CABD), size: 13),
                             SizedBox(width: 5),
                             Text('Chat', style: TextStyle(
-                              color: Color(0xFF4CE0D2), fontSize: 11, fontWeight: FontWeight.w600,
+                              color: Color(0xFF44CABD), fontSize: 11, fontWeight: FontWeight.w600,
                             )),
                           ],
                         ),

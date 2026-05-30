@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 
 class _Particle {
@@ -18,7 +18,7 @@ class _Particle {
 class _ParticlePainter extends CustomPainter {
   final List<_Particle> particles;
   final bool showLines;
-  static const _cyan = Color(0xFF4CE0D2);
+  static const _cyan = Color(0xFF44CABD);
 
   _ParticlePainter(this.particles, {this.showLines = true});
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'router.dart';
@@ -29,7 +29,7 @@ class LogPassApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFF0A1929),
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF4CE0D2),
+          primary: Color(0xFF44CABD),
           surface: Color(0xFF102A43),
         ),
         useMaterial3: false,

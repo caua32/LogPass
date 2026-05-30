@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
@@ -51,7 +51,7 @@ class _ReportsPageState extends State<ReportsPage>
     } on ApiException catch (e) {
       setState(() { _error = e.message; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Erro ao carregar relatórios.'; _loading = false; });
+      setState(() { _error = 'Erro ao carregar relatÃ³rios.'; _loading = false; });
     }
   }
 
@@ -69,13 +69,13 @@ class _ReportsPageState extends State<ReportsPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'Relatórios e Análises',
-            subtitle: 'Visão geral das reclamações',
+            title: 'RelatÃ³rios e AnÃ¡lises',
+            subtitle: 'VisÃ£o geral das reclamaÃ§Ãµes',
             icon: Icons.analytics_outlined,
             actions: [
               IconButton(
                 onPressed: _load,
-                icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2), size: 20),
+                icon: const Icon(Icons.refresh, color: Color(0xFF44CABD), size: 20),
                 tooltip: 'Atualizar',
               ),
             ],
@@ -83,7 +83,7 @@ class _ReportsPageState extends State<ReportsPage>
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator(
-                    color: Color(0xFF4CE0D2), strokeWidth: 2))
+                    color: Color(0xFF44CABD), strokeWidth: 2))
                 : _error != null
                     ? Center(child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -96,14 +96,14 @@ class _ReportsPageState extends State<ReportsPage>
                           TextButton(
                             onPressed: _load,
                             child: const Text('Tentar novamente',
-                                style: TextStyle(color: Color(0xFF4CE0D2))),
+                                style: TextStyle(color: Color(0xFF44CABD))),
                           ),
                         ],
                       ))
                     : SingleChildScrollView(
                         padding: const EdgeInsets.all(18),
                         child: Column(children: [
-                          // Grid de métricas
+                          // Grid de mÃ©tricas
                           GridView.count(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -113,21 +113,21 @@ class _ReportsPageState extends State<ReportsPage>
                             childAspectRatio: 1.5,
                             children: [
                               _metricCard('Total', _reclamacoes.length,
-                                  const Color(0xFF4CE0D2), Icons.inbox_outlined),
+                                  const Color(0xFF44CABD), Icons.inbox_outlined),
                               _metricCard('Pendentes', _count(1),
                                   Colors.orange, Icons.pending_outlined),
-                              _metricCard('Em Análise', _count(2),
+                              _metricCard('Em AnÃ¡lise', _count(2),
                                   Colors.blueAccent, Icons.hourglass_top_outlined),
                               _metricCard('Resolvidas', _count(3),
                                   Colors.green, Icons.check_circle_outline),
                             ],
                           ),
                           const SizedBox(height: 12),
-                          // Não resolvidas (full width)
-                          _fullStatCard('Não Resolvidas', _count(4),
+                          // NÃ£o resolvidas (full width)
+                          _fullStatCard('NÃ£o Resolvidas', _count(4),
                               Colors.red, Icons.cancel_outlined),
                           const SizedBox(height: 14),
-                          // Taxa de resolução
+                          // Taxa de resoluÃ§Ã£o
                           _buildTaxaCard(),
                           // Lista recente
                           if (_reclamacoes.isNotEmpty) ...[
@@ -159,7 +159,7 @@ class _ReportsPageState extends State<ReportsPage>
             Icon(icon, color: color, size: 16),
             const SizedBox(width: 6),
             Expanded(child: Text(title, style: TextStyle(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.7),
               fontSize: 11,
             ))),
           ]),
@@ -191,7 +191,7 @@ class _ReportsPageState extends State<ReportsPage>
         ),
         const SizedBox(width: 14),
         Expanded(child: Text(title, style: TextStyle(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.8),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.8),
           fontSize: 14,
         ))),
         Text(value.toString(), style: TextStyle(
@@ -214,15 +214,15 @@ class _ReportsPageState extends State<ReportsPage>
       decoration: BoxDecoration(
         color: const Color(0xFF102A43),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Icon(Icons.pie_chart_outline,
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.7), size: 16),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.7), size: 16),
           const SizedBox(width: 8),
-          const Text('Taxa de Resolução', style: TextStyle(
-            fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
+          const Text('Taxa de ResoluÃ§Ã£o', style: TextStyle(
+            fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
           )),
           const Spacer(),
           Text('${taxa.toStringAsFixed(1)}%', style: TextStyle(
@@ -240,9 +240,9 @@ class _ReportsPageState extends State<ReportsPage>
           ),
         ),
         const SizedBox(height: 8),
-        Text('${_count(3)} de ${_reclamacoes.length} reclamações resolvidas',
+        Text('${_count(3)} de ${_reclamacoes.length} reclamaÃ§Ãµes resolvidas',
             style: TextStyle(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.55),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.55),
               fontSize: 12,
             )),
       ]),
@@ -255,20 +255,20 @@ class _ReportsPageState extends State<ReportsPage>
       decoration: BoxDecoration(
         color: const Color(0xFF102A43),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
       ),
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
           child: Row(children: [
-            Icon(Icons.history, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7), size: 16),
+            Icon(Icons.history, color: const Color(0xFF44CABD).withValues(alpha: 0.7), size: 16),
             const SizedBox(width: 8),
             const Text('Recentes', style: TextStyle(
-              fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
+              fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
             )),
           ]),
         ),
-        const Divider(color: Color(0xFF4CE0D2), height: 1),
+        const Divider(color: Color(0xFF44CABD), height: 1),
         ...recentes.map((r) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(children: [
@@ -278,10 +278,10 @@ class _ReportsPageState extends State<ReportsPage>
             const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(r.titulo, style: const TextStyle(
-                color: Color(0xFF4CE0D2), fontSize: 12, fontWeight: FontWeight.w500,
+                color: Color(0xFF44CABD), fontSize: 12, fontWeight: FontWeight.w500,
               ), overflow: TextOverflow.ellipsis),
               Text(r.nomeConsumidor ?? '', style: TextStyle(
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.5), fontSize: 10,
+                color: const Color(0xFF44CABD).withValues(alpha: 0.5), fontSize: 10,
               )),
             ])),
             Container(

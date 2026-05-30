@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -67,13 +67,13 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'Notificações de Problemas',
-            subtitle: 'Reclamações pendentes e em análise',
+            title: 'NotificaÃ§Ãµes de Problemas',
+            subtitle: 'ReclamaÃ§Ãµes pendentes e em anÃ¡lise',
             icon: Icons.warning_amber_outlined,
             actions: [
               IconButton(
                 onPressed: _load,
-                icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2), size: 20),
+                icon: const Icon(Icons.refresh, color: Color(0xFF44CABD), size: 20),
                 tooltip: 'Atualizar',
               ),
             ],
@@ -81,7 +81,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator(
-                    color: Color(0xFF4CE0D2), strokeWidth: 2))
+                    color: Color(0xFF44CABD), strokeWidth: 2))
                 : _error != null
                     ? _buildError()
                     : _urgentes.isEmpty
@@ -105,7 +105,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         TextButton(
           onPressed: _load,
           child: const Text('Tentar novamente',
-              style: TextStyle(color: Color(0xFF4CE0D2))),
+              style: TextStyle(color: Color(0xFF44CABD))),
         ),
       ],
     ));
@@ -118,20 +118,20 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         Container(
           width: 80, height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+            color: const Color(0xFF44CABD).withValues(alpha: 0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
+            border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
           ),
           child: const Icon(Icons.check_circle_outline,
-              size: 42, color: Color(0xFF4CE0D2)),
+              size: 42, color: Color(0xFF44CABD)),
         ),
         const SizedBox(height: 16),
         const Text('Tudo em dia!', style: TextStyle(
-          fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
+          fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
         )),
         const SizedBox(height: 6),
         Text('Nenhum alerta pendente no momento.', style: TextStyle(
-          fontSize: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+          fontSize: 13, color: const Color(0xFF44CABD).withValues(alpha: 0.6),
         )),
       ],
     ));
@@ -209,7 +209,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Expanded(child: Text(r.titulo, style: const TextStyle(
-                    color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 14,
+                    color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 14,
                   ), overflow: TextOverflow.ellipsis)),
                   const SizedBox(width: 8),
                   Container(
@@ -227,17 +227,17 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                 const SizedBox(height: 6),
                 Text(r.descricao, maxLines: 2, overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.65),
+                      color: const Color(0xFF44CABD).withValues(alpha: 0.65),
                       fontSize: 12,
                     )),
                 if (r.nomeConsumidor != null) ...[
                   const SizedBox(height: 8),
                   Row(children: [
                     Icon(Icons.person_outline,
-                        size: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.5)),
+                        size: 13, color: const Color(0xFF44CABD).withValues(alpha: 0.5)),
                     const SizedBox(width: 4),
                     Text(r.nomeConsumidor!, style: TextStyle(
-                      fontSize: 11, color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+                      fontSize: 11, color: const Color(0xFF44CABD).withValues(alpha: 0.5),
                     )),
                   ]),
                 ],
@@ -250,18 +250,18 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+                          color: const Color(0xFF44CABD).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+                          border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.chat_bubble_outline,
-                                color: Color(0xFF4CE0D2), size: 13),
+                                color: Color(0xFF44CABD), size: 13),
                             const SizedBox(width: 5),
                             const Text('Chat', style: TextStyle(
-                              color: Color(0xFF4CE0D2), fontSize: 11, fontWeight: FontWeight.w600,
+                              color: Color(0xFF44CABD), fontSize: 11, fontWeight: FontWeight.w600,
                             )),
                           ],
                         ),

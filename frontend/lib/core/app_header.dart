@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppHeader extends StatelessWidget {
@@ -29,7 +29,7 @@ class AppHeader extends StatelessWidget {
         ),
         border: Border(
           bottom: BorderSide(
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+            color: const Color(0xFF44CABD).withValues(alpha: 0.25),
             width: 1.5,
           ),
         ),
@@ -50,15 +50,15 @@ class AppHeader extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.10),
+                  color: const Color(0xFF44CABD).withValues(alpha: 0.10),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.30),
+                    color: const Color(0xFF44CABD).withValues(alpha: 0.30),
                   ),
                 ),
                 child: const Icon(
                   Icons.arrow_back_ios_new,
-                  color: Color(0xFF4CE0D2),
+                  color: Color(0xFF44CABD),
                   size: 15,
                 ),
               ),
@@ -69,13 +69,13 @@ class AppHeader extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.12),
               shape: BoxShape.circle,
               border: Border.all(
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+                color: const Color(0xFF44CABD).withValues(alpha: 0.25),
               ),
             ),
-            child: Icon(icon, size: 18, color: const Color(0xFF4CE0D2)),
+            child: Icon(icon, size: 18, color: const Color(0xFF44CABD)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -97,7 +97,7 @@ class AppHeader extends StatelessWidget {
                     subtitle!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.55),
+                      color: const Color(0xFF44CABD).withValues(alpha: 0.55),
                       letterSpacing: 0.1,
                     ),
                   ),
@@ -116,7 +116,7 @@ InputDecoration appInputDeco(String hint, {IconData? prefixIcon}) {
   return InputDecoration(
     hintText: hint,
     hintStyle: TextStyle(
-      color: const Color(0xFF4CE0D2).withValues(alpha: 0.35),
+      color: const Color(0xFF44CABD).withValues(alpha: 0.35),
       fontSize: 14,
     ),
     filled: true,
@@ -125,27 +125,27 @@ InputDecoration appInputDeco(String hint, {IconData? prefixIcon}) {
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     prefixIcon: prefixIcon != null
         ? Icon(prefixIcon,
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.5), size: 18)
+            color: const Color(0xFF44CABD).withValues(alpha: 0.5), size: 18)
         : null,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.20)),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.20)),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.20)),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.20)),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide:
-          const BorderSide(color: Color(0xFF4CE0D2), width: 1.5),
+          const BorderSide(color: Color(0xFF44CABD), width: 1.5),
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.10)),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.10)),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
@@ -182,7 +182,7 @@ class SectionCard extends StatelessWidget {
         color: const Color(0xFF0D2137),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+          color: const Color(0xFF44CABD).withValues(alpha: 0.12),
         ),
         boxShadow: [
           BoxShadow(
@@ -199,7 +199,7 @@ class SectionCard extends StatelessWidget {
             children: [
               if (titleIcon != null) ...[
                 Icon(titleIcon,
-                    color: const Color(0xFF4CE0D2), size: 16),
+                    color: const Color(0xFF44CABD), size: 16),
                 const SizedBox(width: 8),
               ],
               Text(
@@ -207,7 +207,7 @@ class SectionCard extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF4CE0D2),
+                  color: Color(0xFF44CABD),
                   letterSpacing: 0.2,
                 ),
               ),
@@ -219,8 +219,8 @@ class SectionCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF4CE0D2).withValues(alpha: 0.30),
-                  const Color(0xFF4CE0D2).withValues(alpha: 0.0),
+                  const Color(0xFF44CABD).withValues(alpha: 0.30),
+                  const Color(0xFF44CABD).withValues(alpha: 0.0),
                 ],
               ),
             ),

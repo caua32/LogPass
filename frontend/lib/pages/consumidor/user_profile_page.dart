@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -90,7 +90,7 @@ class _UserProfilePageState extends State<UserProfilePage>
             SizedBox(width: 8),
             Text('Dados salvos com sucesso!'),
           ]),
-          backgroundColor: const Color(0xFF4CE0D2),
+          backgroundColor: const Color(0xFF44CABD),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ));
@@ -127,13 +127,13 @@ class _UserProfilePageState extends State<UserProfilePage>
         child: Column(children: [
           const AppHeader(
             title: 'Meus Dados',
-            subtitle: 'Gerenciar informações pessoais',
+            subtitle: 'Gerenciar informaÃ§Ãµes pessoais',
             icon: Icons.person_outline,
           ),
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator(
-                    color: Color(0xFF4CE0D2), strokeWidth: 2))
+                    color: Color(0xFF44CABD), strokeWidth: 2))
                 : _error != null
                     ? Center(child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +147,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                           TextButton(
                             onPressed: () { setState(() { _loading = true; _error = null; }); _load(); },
                             child: const Text('Tentar novamente',
-                                style: TextStyle(color: Color(0xFF4CE0D2))),
+                                style: TextStyle(color: Color(0xFF44CABD))),
                           ),
                         ],
                       ))
@@ -159,7 +159,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                             _buildAvatar(),
                             const SizedBox(height: 16),
                             SectionCard(
-                              title: 'Informações Pessoais',
+                              title: 'InformaÃ§Ãµes Pessoais',
                               titleIcon: Icons.edit_outlined,
                               children: [
                                 _buildField(_nomeCtrl, 'Nome Completo', Icons.person_outline),
@@ -195,17 +195,17 @@ class _UserProfilePageState extends State<UserProfilePage>
       decoration: BoxDecoration(
         color: const Color(0xFF102A43),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Container(
             width: 64, height: 64,
             decoration: BoxDecoration(
-              color: const Color(0xFF4CE0D2),
+              color: const Color(0xFF44CABD),
               shape: BoxShape.circle,
               boxShadow: [BoxShadow(
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.35),
+                color: const Color(0xFF44CABD).withValues(alpha: 0.35),
                 blurRadius: 16, spreadRadius: 2,
               )],
             ),
@@ -219,25 +219,25 @@ class _UserProfilePageState extends State<UserProfilePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(_nomeCtrl.text, style: const TextStyle(
-                  fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
+                  fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
                 )),
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+                    color: const Color(0xFF44CABD).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
+                    border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
                   ),
                   child: const Text('Consumidor', style: TextStyle(
-                    fontSize: 10, color: Color(0xFF4CE0D2),
+                    fontSize: 10, color: Color(0xFF44CABD),
                     fontWeight: FontWeight.bold, letterSpacing: 0.5,
                   )),
                 ),
                 const SizedBox(height: 4),
                 Text(_emailCtrl.text, style: TextStyle(
                   fontSize: 12,
-                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                  color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                 )),
               ],
             ),
@@ -249,7 +249,7 @@ class _UserProfilePageState extends State<UserProfilePage>
 
   Widget _buildReclamacoes() {
     return SectionCard(
-      title: 'Minhas Reclamações',
+      title: 'Minhas ReclamaÃ§Ãµes',
       titleIcon: Icons.assignment_outlined,
       children: _reclamacoes.map((r) => Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -270,12 +270,12 @@ class _UserProfilePageState extends State<UserProfilePage>
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(r.titulo, style: const TextStyle(
-              color: Color(0xFF4CE0D2), fontWeight: FontWeight.w600, fontSize: 13,
+              color: Color(0xFF44CABD), fontWeight: FontWeight.w600, fontSize: 13,
             )),
             const SizedBox(height: 2),
             Text(r.descricao, maxLines: 1, overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                  color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                   fontSize: 11,
                 )),
           ])),
@@ -297,13 +297,13 @@ class _UserProfilePageState extends State<UserProfilePage>
             child: Container(
               width: 32, height: 32,
               decoration: BoxDecoration(
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+                color: const Color(0xFF44CABD).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+                    color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
               ),
               child: const Icon(Icons.chat_bubble_outline,
-                  color: Color(0xFF4CE0D2), size: 16),
+                  color: Color(0xFF44CABD), size: 16),
             ),
           ),
         ]),
@@ -327,7 +327,7 @@ class _UserProfilePageState extends State<UserProfilePage>
               fontWeight: FontWeight.bold, fontSize: 14,
             )),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CE0D2),
+              backgroundColor: const Color(0xFF44CABD),
               foregroundColor: const Color(0xFF0A1929),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               elevation: 0,
@@ -346,8 +346,8 @@ class _UserProfilePageState extends State<UserProfilePage>
               fontWeight: FontWeight.bold, fontSize: 14,
             )),
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF4CE0D2),
-              side: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.5)),
+              foregroundColor: const Color(0xFF44CABD),
+              side: BorderSide(color: const Color(0xFF44CABD).withValues(alpha: 0.5)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
@@ -362,19 +362,19 @@ class _UserProfilePageState extends State<UserProfilePage>
       controller: ctrl,
       enabled: enabled,
       style: TextStyle(
-        color: enabled ? const Color(0xFF4CE0D2) : const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+        color: enabled ? const Color(0xFF44CABD) : const Color(0xFF44CABD).withValues(alpha: 0.5),
         fontSize: 14,
       ),
       decoration: appInputDeco(label, prefixIcon: icon).copyWith(
         labelText: label,
         labelStyle: TextStyle(
-          color: const Color(0xFF4CE0D2).withValues(alpha: enabled ? 0.8 : 0.4),
+          color: const Color(0xFF44CABD).withValues(alpha: enabled ? 0.8 : 0.4),
           fontSize: 12,
         ),
         hintText: null,
         suffixIcon: !enabled
             ? Icon(Icons.lock_outline,
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.3), size: 16)
+                color: const Color(0xFF44CABD).withValues(alpha: 0.3), size: 16)
             : null,
         fillColor: enabled
             ? const Color(0xFF0A1929).withValues(alpha: 0.8)

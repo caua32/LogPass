@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -58,7 +58,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
     } on ApiException catch (e) {
       if (mounted) _showErro(e.message);
     } catch (_) {
-      if (mounted) _showErro('Erro ao enviar solicitação.');
+      if (mounted) _showErro('Erro ao enviar solicitaÃ§Ã£o.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -72,55 +72,55 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
         backgroundColor: const Color(0xFF102A43),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.4)),
+          side: BorderSide(color: const Color(0xFF44CABD).withValues(alpha: 0.4)),
         ),
         title: Row(children: [
           Container(
             width: 36, height: 36,
             decoration: BoxDecoration(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.15),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.check_circle_outline,
-                color: Color(0xFF4CE0D2), size: 22),
+                color: Color(0xFF44CABD), size: 22),
           ),
           const SizedBox(width: 10),
           const Text('Enviado!', style: TextStyle(
-            color: Color(0xFF4CE0D2), fontSize: 18, fontWeight: FontWeight.bold,
+            color: Color(0xFF44CABD), fontSize: 18, fontWeight: FontWeight.bold,
           )),
         ]),
         content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Sua solicitação foi registrada com sucesso.',
-              style: TextStyle(color: const Color(0xFF4CE0D2).withValues(alpha: 0.8), fontSize: 13)),
+          Text('Sua solicitaÃ§Ã£o foi registrada com sucesso.',
+              style: TextStyle(color: const Color(0xFF44CABD).withValues(alpha: 0.8), fontSize: 13)),
           const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF4CE0D2).withValues(alpha: 0.08),
+              color: const Color(0xFF44CABD).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.25)),
+              border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.25)),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Icon(Icons.tag, size: 14, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7)),
+                Icon(Icons.tag, size: 14, color: const Color(0xFF44CABD).withValues(alpha: 0.7)),
                 const SizedBox(width: 6),
                 Text('Protocolo: $protocolo', style: const TextStyle(
-                  color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 13,
+                  color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 13,
                 )),
               ]),
               const SizedBox(height: 6),
               Row(children: [
-                Icon(Icons.swap_horiz, size: 14, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7)),
+                Icon(Icons.swap_horiz, size: 14, color: const Color(0xFF44CABD).withValues(alpha: 0.7)),
                 const SizedBox(width: 6),
                 Text('Tipo: ${_tipo == 'troca' ? 'Troca' : 'Reembolso'}',
-                    style: TextStyle(color: const Color(0xFF4CE0D2).withValues(alpha: 0.8), fontSize: 13)),
+                    style: TextStyle(color: const Color(0xFF44CABD).withValues(alpha: 0.8), fontSize: 13)),
               ]),
             ]),
           ),
           const SizedBox(height: 12),
-          Text('Nossa equipe analisará em até 24h úteis.',
+          Text('Nossa equipe analisarÃ¡ em atÃ© 24h Ãºteis.',
               style: TextStyle(
-                color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                 fontSize: 12,
                 fontStyle: FontStyle.italic,
               )),
@@ -131,7 +131,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
             child: ElevatedButton(
               onPressed: () { Navigator.pop(context); context.go('/dashboard'); },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CE0D2),
+                backgroundColor: const Color(0xFF44CABD),
                 foregroundColor: const Color(0xFF0A1929),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
@@ -167,8 +167,8 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
         opacity: _fadeAnim,
         child: Column(children: [
           const AppHeader(
-            title: 'Nova Solicitação',
-            subtitle: 'Registre sua reclamação',
+            title: 'Nova SolicitaÃ§Ã£o',
+            subtitle: 'Registre sua reclamaÃ§Ã£o',
             icon: Icons.assignment_outlined,
           ),
           Expanded(
@@ -184,7 +184,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                       TextFormField(
                         controller: _cnpjCtrl,
                         keyboardType: TextInputType.text,
-                        style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
                         decoration: appInputDeco('00.000.000/0000-00'),
                         validator: (v) => (v == null || v.isEmpty)
                             ? 'Informe o CNPJ da empresa' : null,
@@ -193,7 +193,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'Tipo de Solicitação',
+                    title: 'Tipo de SolicitaÃ§Ã£o',
                     titleIcon: Icons.swap_horiz,
                     children: [
                       Row(children: [
@@ -205,37 +205,37 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'Número do Pedido',
+                    title: 'NÃºmero do Pedido',
                     titleIcon: Icons.receipt_outlined,
                     children: [
                       TextFormField(
                         controller: _numeroPedidoCtrl,
-                        style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
                         decoration: appInputDeco('Ex: 12345'),
                         validator: (v) => (v == null || v.isEmpty)
-                            ? 'Informe o número do pedido' : null,
+                            ? 'Informe o nÃºmero do pedido' : null,
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'Motivo da Reclamação',
+                    title: 'Motivo da ReclamaÃ§Ã£o',
                     titleIcon: Icons.edit_note_outlined,
                     children: [
                       TextFormField(
                         controller: _motivoCtrl,
                         maxLines: 4,
-                        style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
                         decoration: appInputDeco('Descreva detalhadamente o que aconteceu...'),
                         validator: (v) => (v == null || v.trim().length < 10)
-                            ? 'Descreva o problema (mínimo 10 caracteres)' : null,
+                            ? 'Descreva o problema (mÃ­nimo 10 caracteres)' : null,
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
                   if (_loading)
                     const Center(child: CircularProgressIndicator(
-                        color: Color(0xFF4CE0D2), strokeWidth: 2))
+                        color: Color(0xFF44CABD), strokeWidth: 2))
                   else
                     SizedBox(
                       width: double.infinity,
@@ -243,11 +243,11 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                       child: ElevatedButton.icon(
                         onPressed: _enviar,
                         icon: const Icon(Icons.send_outlined, size: 18),
-                        label: const Text('Enviar Solicitação', style: TextStyle(
+                        label: const Text('Enviar SolicitaÃ§Ã£o', style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold, letterSpacing: 0.5,
                         )),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4CE0D2),
+                          backgroundColor: const Color(0xFF44CABD),
                           foregroundColor: const Color(0xFF0A1929),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           elevation: 0,
@@ -274,23 +274,23 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: selected
-              ? const Color(0xFF4CE0D2).withValues(alpha: 0.15)
+              ? const Color(0xFF44CABD).withValues(alpha: 0.15)
               : const Color(0xFF0A1929).withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: selected
-                ? const Color(0xFF4CE0D2)
-                : const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+                ? const Color(0xFF44CABD)
+                : const Color(0xFF44CABD).withValues(alpha: 0.25),
             width: selected ? 1.5 : 1,
           ),
         ),
         child: Column(children: [
           Icon(icon,
-              color: selected ? const Color(0xFF4CE0D2) : const Color(0xFF4CE0D2).withValues(alpha: 0.4),
+              color: selected ? const Color(0xFF44CABD) : const Color(0xFF44CABD).withValues(alpha: 0.4),
               size: 22),
           const SizedBox(height: 6),
           Text(label, style: TextStyle(
-            color: selected ? const Color(0xFF4CE0D2) : const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+            color: selected ? const Color(0xFF44CABD) : const Color(0xFF44CABD).withValues(alpha: 0.5),
             fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             fontSize: 13,
           )),

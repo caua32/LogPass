@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
   Timer? _pollTimer;
   String? _meuTipo;
 
-  static const _cyan = Color(0xFF4CE0D2);
+  static const _cyan = Color(0xFF44CABD);
   static const _bg = Color(0xFF0A1929);
   static const _card = Color(0xFF102A43);
 

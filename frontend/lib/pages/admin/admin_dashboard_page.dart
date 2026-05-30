@@ -58,7 +58,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Status atualizado!'),
-          backgroundColor: Color(0xFF4CE0D2),
+          backgroundColor: Color(0xFF44CABD),
           behavior: SnackBarBehavior.floating,
         ));
       }
@@ -76,13 +76,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF102A43),
-        title: const Text('Confirmar Logout', style: TextStyle(color: Color(0xFF4CE0D2))),
+        title: const Text('Confirmar Logout', style: TextStyle(color: Color(0xFF44CABD))),
         content: const Text('Tem certeza que deseja sair do painel administrativo?',
-            style: TextStyle(color: Color(0xFF4CE0D2))),
+            style: TextStyle(color: Color(0xFF44CABD))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar', style: TextStyle(color: Color(0xFF4CE0D2))),
+            child: const Text('Cancelar', style: TextStyle(color: Color(0xFF44CABD))),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -91,7 +91,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               if (mounted) context.go('/login');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CE0D2),
+              backgroundColor: const Color(0xFF44CABD),
               foregroundColor: const Color(0xFF0A1929),
             ),
             child: const Text('Sair'),
@@ -107,7 +107,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF102A43),
-        title: const Text('Estatísticas', style: TextStyle(color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold)),
+        title: const Text('Estatísticas', style: TextStyle(color: Color(0xFF44CABD), fontWeight: FontWeight.bold)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           _statRow('Total', total, Colors.blue),
           _statRow('Pendentes', _reclamacoes.where((r) => r.idStatus == 1).length, Colors.orange),
@@ -119,7 +119,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CE0D2), foregroundColor: const Color(0xFF0A1929),
+              backgroundColor: const Color(0xFF44CABD), foregroundColor: const Color(0xFF0A1929),
             ),
             child: const Text('Fechar'),
           ),
@@ -135,7 +135,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         Row(children: [
           Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
           const SizedBox(width: 8),
-          Text(label, style: const TextStyle(color: Color(0xFF4CE0D2))),
+          Text(label, style: const TextStyle(color: Color(0xFF44CABD))),
         ]),
         Text(value.toString(), style: TextStyle(color: color, fontWeight: FontWeight.bold)),
       ]),
@@ -155,19 +155,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         elevation: 0,
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Text('Painel Administrativo', style: TextStyle(
-            color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 18,
+            color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 18,
           )),
           if (_nomeAdmin != null)
             Text('Admin • $_nomeAdmin', style: const TextStyle(
-              color: Color(0xFF4CE0D2), fontSize: 12, fontWeight: FontWeight.normal,
+              color: Color(0xFF44CABD), fontSize: 12, fontWeight: FontWeight.normal,
             )),
         ]),
         leading: null,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2)), onPressed: _load),
+          IconButton(icon: const Icon(Icons.refresh, color: Color(0xFF44CABD)), onPressed: _load),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Color(0xFF4CE0D2)),
+            icon: const Icon(Icons.more_vert, color: Color(0xFF44CABD)),
             color: const Color(0xFF102A43),
             onSelected: (v) {
               if (v == 'stats') _showStats();
@@ -175,14 +175,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             },
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'stats', child: Row(children: [
-                Icon(Icons.analytics, color: Color(0xFF4CE0D2)),
+                Icon(Icons.analytics, color: Color(0xFF44CABD)),
                 SizedBox(width: 8),
-                Text('Estatísticas', style: TextStyle(color: Color(0xFF4CE0D2))),
+                Text('Estatísticas', style: TextStyle(color: Color(0xFF44CABD))),
               ])),
               const PopupMenuItem(value: 'logout', child: Row(children: [
-                Icon(Icons.logout, color: Color(0xFF4CE0D2)),
+                Icon(Icons.logout, color: Color(0xFF44CABD)),
                 SizedBox(width: 8),
-                Text('Sair', style: TextStyle(color: Color(0xFF4CE0D2))),
+                Text('Sair', style: TextStyle(color: Color(0xFF44CABD))),
               ])),
             ],
           ),
@@ -194,20 +194,20 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           width: 300,
           decoration: const BoxDecoration(
             color: Color(0xFF102A43),
-            border: Border(right: BorderSide(color: Color(0xFF4CE0D2))),
+            border: Border(right: BorderSide(color: Color(0xFF44CABD))),
           ),
           child: Column(children: [
             Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xFF4CE0D2))),
+                border: Border(bottom: BorderSide(color: Color(0xFF44CABD))),
               ),
               child: Column(children: [
                 const Row(children: [
-                  Icon(Icons.list_alt, color: Color(0xFF4CE0D2)),
+                  Icon(Icons.list_alt, color: Color(0xFF44CABD)),
                   SizedBox(width: 8),
                   Text('Reclamações', style: TextStyle(
-                    color: Color(0xFF4CE0D2), fontSize: 16, fontWeight: FontWeight.bold,
+                    color: Color(0xFF44CABD), fontSize: 16, fontWeight: FontWeight.bold,
                   )),
                 ]),
                 const SizedBox(height: 10),
@@ -227,7 +227,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF4CE0D2)))
+                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF44CABD)))
                   : _error != null
                       ? Center(child: Text(_error!, style: const TextStyle(color: Color(0xFFFF6B6B))))
                       : ListView.builder(
@@ -248,10 +248,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                   )),
                                 ),
                                 title: Text(r.titulo, style: const TextStyle(
-                                  color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 13,
+                                  color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 13,
                                 ), overflow: TextOverflow.ellipsis),
                                 subtitle: Text(r.nomeConsumidor ?? '-', style: TextStyle(
-                                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.6), fontSize: 11,
+                                  color: const Color(0xFF44CABD).withValues(alpha: 0.6), fontSize: 11,
                                 )),
                                 trailing: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -271,9 +271,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         Expanded(
           child: _filtradas.isEmpty && !_loading
               ? const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(Icons.inbox_outlined, size: 64, color: Color(0xFF4CE0D2)),
+                  Icon(Icons.inbox_outlined, size: 64, color: Color(0xFF44CABD)),
                   SizedBox(height: 16),
-                  Text('Nenhuma reclamação encontrada', style: TextStyle(color: Color(0xFF4CE0D2), fontSize: 18)),
+                  Text('Nenhuma reclamação encontrada', style: TextStyle(color: Color(0xFF44CABD), fontSize: 18)),
                 ]))
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -292,12 +292,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF4CE0D2) : Colors.transparent,
+          color: selected ? const Color(0xFF44CABD) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF4CE0D2)),
+          border: Border.all(color: const Color(0xFF44CABD)),
         ),
         child: Text(label, style: TextStyle(
-          color: selected ? const Color(0xFF0A1929) : const Color(0xFF4CE0D2),
+          color: selected ? const Color(0xFF0A1929) : const Color(0xFF44CABD),
           fontSize: 11, fontWeight: FontWeight.bold,
         )),
       ),
@@ -311,13 +311,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF102A43),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
-        boxShadow: [BoxShadow(color: const Color(0xFF4CE0D2).withValues(alpha: 0.1), blurRadius: 10)],
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
+        boxShadow: [BoxShadow(color: const Color(0xFF44CABD).withValues(alpha: 0.1), blurRadius: 10)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(child: Text(r.titulo, style: const TextStyle(
-            color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 16,
+            color: Color(0xFF44CABD), fontWeight: FontWeight.bold, fontSize: 16,
           ), overflow: TextOverflow.ellipsis)),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -327,23 +327,23 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         ]),
         const SizedBox(height: 8),
         Text(r.descricao, maxLines: 2, overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: const Color(0xFF4CE0D2).withValues(alpha: 0.7))),
+            style: TextStyle(color: const Color(0xFF44CABD).withValues(alpha: 0.7))),
         const SizedBox(height: 8),
         Row(children: [
           if (r.nomeEmpresa != null) ...[
-            Icon(Icons.business, size: 14, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7)),
+            Icon(Icons.business, size: 14, color: const Color(0xFF44CABD).withValues(alpha: 0.7)),
             const SizedBox(width: 4),
-            Text(r.nomeEmpresa!, style: TextStyle(fontSize: 12, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7))),
+            Text(r.nomeEmpresa!, style: TextStyle(fontSize: 12, color: const Color(0xFF44CABD).withValues(alpha: 0.7))),
             const SizedBox(width: 16),
           ],
           if (r.nomeConsumidor != null) ...[
-            Icon(Icons.person, size: 14, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7)),
+            Icon(Icons.person, size: 14, color: const Color(0xFF44CABD).withValues(alpha: 0.7)),
             const SizedBox(width: 4),
-            Text(r.nomeConsumidor!, style: TextStyle(fontSize: 12, color: const Color(0xFF4CE0D2).withValues(alpha: 0.7))),
+            Text(r.nomeConsumidor!, style: TextStyle(fontSize: 12, color: const Color(0xFF44CABD).withValues(alpha: 0.7))),
           ],
         ]),
         const SizedBox(height: 12),
-        const Text('Alterar status:', style: TextStyle(fontSize: 12, color: Color(0xFF4CE0D2))),
+        const Text('Alterar status:', style: TextStyle(fontSize: 12, color: Color(0xFF44CABD))),
         const SizedBox(height: 8),
         Wrap(spacing: 8, children: kStatusNomes.entries.map((e) {
           final isActive = r.idStatus == e.key;

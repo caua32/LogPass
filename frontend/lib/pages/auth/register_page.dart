@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
   bool _loading = false;
   bool _senhaVisivel = false;
 
-  static const _cyan = Color(0xFF4CE0D2);
+  static const _cyan = Color(0xFF44CABD);
   static const _bg = Color(0xFF0A1929);
   static const _card = Color(0xFF0D2137);
 
@@ -77,21 +77,21 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     if (_nomeCtrl.text.trim().isEmpty ||
         _emailCtrl.text.trim().isEmpty ||
         _senhaCtrl.text.isEmpty) {
-      setState(() => _erro = 'Preencha todos os campos obrigatórios.');
+      setState(() => _erro = 'Preencha todos os campos obrigatÃ³rios.');
       return;
     }
     if (_tipo == null) {
-      setState(() => _erro = 'Selecione o tipo de usuário.');
+      setState(() => _erro = 'Selecione o tipo de usuÃ¡rio.');
       return;
     }
     if (_tipo == 'consumidor' &&
         !RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$').hasMatch(_cpfCtrl.text.trim())) {
-      setState(() => _erro = 'CPF inválido. Use o formato 000.000.000-00.');
+      setState(() => _erro = 'CPF invÃ¡lido. Use o formato 000.000.000-00.');
       return;
     }
     if (_tipo == 'empresa' &&
         !RegExp(r'^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$').hasMatch(_cnpjCtrl.text.trim())) {
-      setState(() => _erro = 'CNPJ inválido. Use o formato 00.000.000/0000-00.');
+      setState(() => _erro = 'CNPJ invÃ¡lido. Use o formato 00.000.000/0000-00.');
       return;
     }
     setState(() => _loading = true);
@@ -124,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     } on ApiException catch (e) {
       if (mounted) setState(() => _erro = e.message);
     } catch (_) {
-      if (mounted) setState(() => _erro = 'Não foi possível conectar ao servidor.');
+      if (mounted) setState(() => _erro = 'NÃ£o foi possÃ­vel conectar ao servidor.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -293,7 +293,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [_CnpjFormatter()]),
                                     const SizedBox(height: 16),
-                                    _buildField('Razão Social / Nome da Empresa',
+                                    _buildField('RazÃ£o Social / Nome da Empresa',
                                         _razaoCtrl,
                                         icon: Icons.apartment_outlined),
                                   ],
@@ -305,7 +305,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                       alignment: WrapAlignment.center,
                                       children: [
                                         Text(
-                                          'Já possui conta? ',
+                                          'JÃ¡ possui conta? ',
                                           style: TextStyle(
                                             color: _cyan.withValues(alpha: 0.5),
                                             fontSize: 13,
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                                         GestureDetector(
                                           onTap: () => context.pop(),
                                           child: const Text(
-                                            'Faça login',
+                                            'FaÃ§a login',
                                             style: TextStyle(
                                               color: _cyan,
                                               fontSize: 13,
@@ -443,7 +443,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TIPO DE USUÁRIO',
+            'TIPO DE USUÃRIO',
             style: TextStyle(
               color: _cyan.withValues(alpha: 0.55),
               fontSize: 10,
