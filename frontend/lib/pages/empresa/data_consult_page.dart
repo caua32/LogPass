@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -82,7 +82,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
       body: Column(children: [
         AppHeader(
           title: 'Consulta de Dados',
-          subtitle: 'ReclamaÃ§Ãµes recebidas',
+          subtitle: 'Reclamações recebidas',
           icon: Icons.inventory_2_outlined,
           actions: [
             IconButton(
@@ -121,7 +121,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
                       Expanded(flex: 3, child: TextField(
                         controller: _searchCtrl,
                         style: const TextStyle(color: Color(0xFF44CABD), fontSize: 13),
-                        decoration: appInputDeco('Buscar por tÃ­tulo ou descriÃ§Ã£o...',
+                        decoration: appInputDeco('Buscar por título ou descrição...',
                             prefixIcon: Icons.search).copyWith(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         ),
@@ -144,9 +144,9 @@ class _DataConsultPageState extends State<DataConsultPage> {
                           items: const [
                             DropdownMenuItem(value: 'todos', child: Text('Todos')),
                             DropdownMenuItem(value: '1', child: Text('Pendente')),
-                            DropdownMenuItem(value: '2', child: Text('Em AnÃ¡lise')),
+                            DropdownMenuItem(value: '2', child: Text('Em Análise')),
                             DropdownMenuItem(value: '3', child: Text('Resolvida')),
-                            DropdownMenuItem(value: '4', child: Text('NÃ£o Resolvida')),
+                            DropdownMenuItem(value: '4', child: Text('Não Resolvida')),
                           ],
                           onChanged: (v) {
                             setState(() => _filtroStatus = v ?? 'todos');
@@ -180,7 +180,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
                         : _filtradas.isEmpty
                             ? const Padding(
                                 padding: EdgeInsets.all(32),
-                                child: Center(child: Text('Nenhuma reclamaÃ§Ã£o encontrada.',
+                                child: Center(child: Text('Nenhuma reclamação encontrada.',
                                     style: TextStyle(color: Color(0xFF44CABD)))),
                               )
                             : Column(children: [
@@ -194,7 +194,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
                                             color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                                             fontSize: 12,
                                           )),
-                                      Text('PÃ¡g. $_page/$_totalPages',
+                                      Text('Pág. $_page/$_totalPages',
                                           style: TextStyle(
                                             color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                                             fontSize: 12,

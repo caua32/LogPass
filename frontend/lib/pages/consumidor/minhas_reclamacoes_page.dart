@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -52,7 +52,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
     } on ApiException catch (e) {
       setState(() { _error = e.message; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Erro ao carregar solicitaÃ§Ãµes.'; _loading = false; });
+      setState(() { _error = 'Erro ao carregar solicitações.'; _loading = false; });
     }
   }
 
@@ -66,8 +66,8 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'Minhas SolicitaÃ§Ãµes',
-            subtitle: 'HistÃ³rico e acompanhamento',
+            title: 'Minhas Solicitações',
+            subtitle: 'Histórico e acompanhamento',
             icon: Icons.list_alt_outlined,
             actions: [
               IconButton(
@@ -124,18 +124,18 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
           child: const Icon(Icons.inbox_outlined, size: 42, color: Color(0xFF44CABD)),
         ),
         const SizedBox(height: 16),
-        const Text('Nenhuma solicitaÃ§Ã£o', style: TextStyle(
+        const Text('Nenhuma solicitação', style: TextStyle(
           fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
         )),
         const SizedBox(height: 6),
-        Text('VocÃª ainda nÃ£o abriu nenhuma solicitaÃ§Ã£o.', style: TextStyle(
+        Text('Você ainda não abriu nenhuma solicitação.', style: TextStyle(
           fontSize: 13, color: const Color(0xFF44CABD).withValues(alpha: 0.6),
         )),
         const SizedBox(height: 20),
         TextButton.icon(
           onPressed: () => context.push('/nova-reclamacao'),
           icon: const Icon(Icons.add_circle_outline, size: 16, color: Color(0xFF44CABD)),
-          label: const Text('Abrir nova solicitaÃ§Ã£o',
+          label: const Text('Abrir nova solicitação',
               style: TextStyle(color: Color(0xFF44CABD))),
         ),
       ],
@@ -157,7 +157,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                   border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  '${_reclamacoes.length} solicitaÃ§${_reclamacoes.length != 1 ? 'Ãµes' : 'Ã£o'}',
+                  '${_reclamacoes.length} solicitaç${_reclamacoes.length != 1 ? 'ões' : 'ão'}',
                   style: const TextStyle(
                     color: Color(0xFF44CABD), fontSize: 12, fontWeight: FontWeight.bold,
                   ),

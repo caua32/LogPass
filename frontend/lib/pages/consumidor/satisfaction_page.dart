@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SatisfactionPage extends StatelessWidget {
@@ -15,7 +15,7 @@ class SatisfactionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Ãcone de sucesso com glow
+              // Ícone de sucesso com glow
               Center(
                 child: TweenAnimationBuilder(
                   duration: const Duration(milliseconds: 700),
@@ -43,7 +43,7 @@ class SatisfactionPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              const Text('SolicitaÃ§Ã£o Enviada!',
+              const Text('Solicitação Enviada!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24, fontWeight: FontWeight.bold,
@@ -51,7 +51,7 @@ class SatisfactionPage extends StatelessWidget {
                   )),
               const SizedBox(height: 10),
               Text(
-                'Sua solicitaÃ§Ã£o foi registrada com sucesso.\nEm breve a empresa entrarÃ¡ em contato.',
+                'Sua solicitação foi registrada com sucesso.\nEm breve a empresa entrará em contato.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color(0xFF44CABD).withValues(alpha: 0.7),
@@ -76,7 +76,7 @@ class SatisfactionPage extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => context.go('/dashboard'),
                   icon: const Icon(Icons.home_outlined, size: 18),
-                  label: const Text('Voltar ao inÃ­cio', style: TextStyle(
+                  label: const Text('Voltar ao início', style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 15,
                   )),
                   style: ElevatedButton.styleFrom(
@@ -93,7 +93,7 @@ class SatisfactionPage extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: () => context.pushReplacement('/nova-reclamacao'),
                   icon: const Icon(Icons.add_circle_outline, size: 18),
-                  label: const Text('Abrir outra solicitaÃ§Ã£o', style: TextStyle(
+                  label: const Text('Abrir outra solicitação', style: TextStyle(
                     fontWeight: FontWeight.w600, fontSize: 14,
                   )),
                   style: OutlinedButton.styleFrom(

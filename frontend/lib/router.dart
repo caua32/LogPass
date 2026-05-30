@@ -56,7 +56,7 @@ GoRouter buildRouter(AuthProvider auth) {
         builder: (c, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '') ?? 0;
           final extra = s.extra as Map<String, dynamic>?;
-          final titulo = extra?['titulo'] as String? ?? 'Reclamação #$id';
+          final titulo = extra?['titulo'] as String? ?? 'Reclamao #$id';
           return ChatPage(reclamacaoId: id, titulo: titulo);
         },
       ),

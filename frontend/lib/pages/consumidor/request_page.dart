@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -58,7 +58,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
     } on ApiException catch (e) {
       if (mounted) _showErro(e.message);
     } catch (_) {
-      if (mounted) _showErro('Erro ao enviar solicitaÃ§Ã£o.');
+      if (mounted) _showErro('Erro ao enviar solicitação.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -90,7 +90,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
           )),
         ]),
         content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Sua solicitaÃ§Ã£o foi registrada com sucesso.',
+          Text('Sua solicitação foi registrada com sucesso.',
               style: TextStyle(color: const Color(0xFF44CABD).withValues(alpha: 0.8), fontSize: 13)),
           const SizedBox(height: 14),
           Container(
@@ -118,7 +118,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
             ]),
           ),
           const SizedBox(height: 12),
-          Text('Nossa equipe analisarÃ¡ em atÃ© 24h Ãºteis.',
+          Text('Nossa equipe analisará em até 24h úteis.',
               style: TextStyle(
                 color: const Color(0xFF44CABD).withValues(alpha: 0.6),
                 fontSize: 12,
@@ -167,8 +167,8 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
         opacity: _fadeAnim,
         child: Column(children: [
           const AppHeader(
-            title: 'Nova SolicitaÃ§Ã£o',
-            subtitle: 'Registre sua reclamaÃ§Ã£o',
+            title: 'Nova Solicitação',
+            subtitle: 'Registre sua reclamação',
             icon: Icons.assignment_outlined,
           ),
           Expanded(
@@ -193,7 +193,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'Tipo de SolicitaÃ§Ã£o',
+                    title: 'Tipo de Solicitação',
                     titleIcon: Icons.swap_horiz,
                     children: [
                       Row(children: [
@@ -205,7 +205,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'NÃºmero do Pedido',
+                    title: 'Número do Pedido',
                     titleIcon: Icons.receipt_outlined,
                     children: [
                       TextFormField(
@@ -213,13 +213,13 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                         style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
                         decoration: appInputDeco('Ex: 12345'),
                         validator: (v) => (v == null || v.isEmpty)
-                            ? 'Informe o nÃºmero do pedido' : null,
+                            ? 'Informe o número do pedido' : null,
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
                   SectionCard(
-                    title: 'Motivo da ReclamaÃ§Ã£o',
+                    title: 'Motivo da Reclamação',
                     titleIcon: Icons.edit_note_outlined,
                     children: [
                       TextFormField(
@@ -228,7 +228,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                         style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
                         decoration: appInputDeco('Descreva detalhadamente o que aconteceu...'),
                         validator: (v) => (v == null || v.trim().length < 10)
-                            ? 'Descreva o problema (mÃ­nimo 10 caracteres)' : null,
+                            ? 'Descreva o problema (mínimo 10 caracteres)' : null,
                       ),
                     ],
                   ),
@@ -243,7 +243,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                       child: ElevatedButton.icon(
                         onPressed: _enviar,
                         icon: const Icon(Icons.send_outlined, size: 18),
-                        label: const Text('Enviar SolicitaÃ§Ã£o', style: TextStyle(
+                        label: const Text('Enviar Solicitação', style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold, letterSpacing: 0.5,
                         )),
                         style: ElevatedButton.styleFrom(

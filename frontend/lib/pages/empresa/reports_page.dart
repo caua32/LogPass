@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
@@ -51,7 +51,7 @@ class _ReportsPageState extends State<ReportsPage>
     } on ApiException catch (e) {
       setState(() { _error = e.message; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Erro ao carregar relatÃ³rios.'; _loading = false; });
+      setState(() { _error = 'Erro ao carregar relatórios.'; _loading = false; });
     }
   }
 
@@ -69,8 +69,8 @@ class _ReportsPageState extends State<ReportsPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'RelatÃ³rios e AnÃ¡lises',
-            subtitle: 'VisÃ£o geral das reclamaÃ§Ãµes',
+            title: 'Relatórios e Análises',
+            subtitle: 'Visão geral das reclamações',
             icon: Icons.analytics_outlined,
             actions: [
               IconButton(
@@ -103,7 +103,7 @@ class _ReportsPageState extends State<ReportsPage>
                     : SingleChildScrollView(
                         padding: const EdgeInsets.all(18),
                         child: Column(children: [
-                          // Grid de mÃ©tricas
+                          // Grid de métricas
                           GridView.count(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -116,18 +116,18 @@ class _ReportsPageState extends State<ReportsPage>
                                   const Color(0xFF44CABD), Icons.inbox_outlined),
                               _metricCard('Pendentes', _count(1),
                                   Colors.orange, Icons.pending_outlined),
-                              _metricCard('Em AnÃ¡lise', _count(2),
+                              _metricCard('Em Análise', _count(2),
                                   Colors.blueAccent, Icons.hourglass_top_outlined),
                               _metricCard('Resolvidas', _count(3),
                                   Colors.green, Icons.check_circle_outline),
                             ],
                           ),
                           const SizedBox(height: 12),
-                          // NÃ£o resolvidas (full width)
-                          _fullStatCard('NÃ£o Resolvidas', _count(4),
+                          // Não resolvidas (full width)
+                          _fullStatCard('Não Resolvidas', _count(4),
                               Colors.red, Icons.cancel_outlined),
                           const SizedBox(height: 14),
-                          // Taxa de resoluÃ§Ã£o
+                          // Taxa de resolução
                           _buildTaxaCard(),
                           // Lista recente
                           if (_reclamacoes.isNotEmpty) ...[
@@ -221,7 +221,7 @@ class _ReportsPageState extends State<ReportsPage>
           Icon(Icons.pie_chart_outline,
               color: const Color(0xFF44CABD).withValues(alpha: 0.7), size: 16),
           const SizedBox(width: 8),
-          const Text('Taxa de ResoluÃ§Ã£o', style: TextStyle(
+          const Text('Taxa de Resolução', style: TextStyle(
             fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF44CABD),
           )),
           const Spacer(),
@@ -240,7 +240,7 @@ class _ReportsPageState extends State<ReportsPage>
           ),
         ),
         const SizedBox(height: 8),
-        Text('${_count(3)} de ${_reclamacoes.length} reclamaÃ§Ãµes resolvidas',
+        Text('${_count(3)} de ${_reclamacoes.length} reclamações resolvidas',
             style: TextStyle(
               color: const Color(0xFF44CABD).withValues(alpha: 0.55),
               fontSize: 12,

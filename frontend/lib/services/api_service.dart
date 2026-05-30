@@ -123,7 +123,7 @@ class ApiService {
     _decode(res);
   }
 
-  // Reclamações
+  // Reclamaes
   static Future<Map<String, dynamic>> criarReclamacao(
       String token, Map<String, dynamic> data) async {
     final res = await http

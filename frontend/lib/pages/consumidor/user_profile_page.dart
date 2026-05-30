@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -127,7 +127,7 @@ class _UserProfilePageState extends State<UserProfilePage>
         child: Column(children: [
           const AppHeader(
             title: 'Meus Dados',
-            subtitle: 'Gerenciar informaÃ§Ãµes pessoais',
+            subtitle: 'Gerenciar informações pessoais',
             icon: Icons.person_outline,
           ),
           Expanded(
@@ -159,7 +159,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                             _buildAvatar(),
                             const SizedBox(height: 16),
                             SectionCard(
-                              title: 'InformaÃ§Ãµes Pessoais',
+                              title: 'Informações Pessoais',
                               titleIcon: Icons.edit_outlined,
                               children: [
                                 _buildField(_nomeCtrl, 'Nome Completo', Icons.person_outline),
@@ -249,7 +249,7 @@ class _UserProfilePageState extends State<UserProfilePage>
 
   Widget _buildReclamacoes() {
     return SectionCard(
-      title: 'Minhas ReclamaÃ§Ãµes',
+      title: 'Minhas Reclamações',
       titleIcon: Icons.assignment_outlined,
       children: _reclamacoes.map((r) => Container(
         margin: const EdgeInsets.only(bottom: 10),

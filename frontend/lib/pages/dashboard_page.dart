@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
@@ -47,7 +47,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final isEmpresa = auth.tipo == 'empresa';
-    final nome = auth.user?.nome ?? 'UsuÃ¡rio';
+    final nome = auth.user?.nome ?? 'Usuário';
 
     return Scaffold(
       backgroundColor: _bg,
@@ -136,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 Row(
                   children: [
                     Text(
-                      'OlÃ¡, $nome',
+                      'Olá, $nome',
                       style: TextStyle(
                         fontSize: 12,
                         color: _cyan.withValues(alpha: 0.65),
@@ -211,17 +211,17 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
   Widget _buildMenuGrid(bool isEmpresa) {
     final consumerItems = [
-      _MenuItem(Icons.assignment_outlined, 'Nova\nSolicitaÃ§Ã£o', '/nova-reclamacao'),
-      _MenuItem(Icons.list_alt_outlined, 'Minhas\nSolicitaÃ§Ãµes', '/minhas-reclamacoes'),
-      _MenuItem(Icons.star_outline_rounded, 'AvaliaÃ§Ã£o\nde SatisfaÃ§Ã£o', '/satisfacao'),
+      _MenuItem(Icons.assignment_outlined, 'Nova\nSolicitação', '/nova-reclamacao'),
+      _MenuItem(Icons.list_alt_outlined, 'Minhas\nSolicitações', '/minhas-reclamacoes'),
+      _MenuItem(Icons.star_outline_rounded, 'Avaliação\nde Satisfação', '/satisfacao'),
       _MenuItem(Icons.person_outline, 'Meus\nDados', '/perfil/consumidor'),
     ];
 
     final empresaItems = [
       _MenuItem(Icons.inventory_2_outlined, 'Consultar\nDados', '/empresa/consulta'),
-      _MenuItem(Icons.notifications_outlined, 'NotificaÃ§Ãµes\nProblemas', '/empresa/problemas'),
+      _MenuItem(Icons.notifications_outlined, 'Notificações\nProblemas', '/empresa/problemas'),
       _MenuItem(Icons.person_outline, 'Perfil\nEmpresa', '/perfil/empresa'),
-      _MenuItem(Icons.analytics_outlined, 'RelatÃ³rios\ne AnÃ¡lises', '/empresa/relatorios'),
+      _MenuItem(Icons.analytics_outlined, 'Relatórios\ne Análises', '/empresa/relatorios'),
     ];
 
     final items = isEmpresa ? empresaItems : consumerItems;
@@ -324,8 +324,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
               Expanded(
                 child: Text(
                   isEmpresa
-                      ? 'Verifique as notificaÃ§Ãµes regularmente para manter a satisfaÃ§Ã£o dos clientes.'
-                      : 'Use Nova SolicitaÃ§Ã£o sempre que precisar registrar um problema com um produto.',
+                      ? 'Verifique as notificações regularmente para manter a satisfação dos clientes.'
+                      : 'Use Nova Solicitação sempre que precisar registrar um problema com um produto.',
                   style: TextStyle(
                     fontSize: 12,
                     color: _cyan.withValues(alpha: 0.60),

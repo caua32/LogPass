@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
@@ -122,7 +122,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
         child: Column(children: [
           const AppHeader(
             title: 'Perfil da Empresa',
-            subtitle: 'Gerenciar informaÃ§Ãµes empresariais',
+            subtitle: 'Gerenciar informações empresariais',
             icon: Icons.business_outlined,
           ),
           Expanded(
@@ -153,7 +153,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
                             _buildAvatar(),
                             const SizedBox(height: 16),
                             SectionCard(
-                              title: 'InformaÃ§Ãµes Empresariais',
+                              title: 'Informações Empresariais',
                               titleIcon: Icons.edit_outlined,
                               children: [
                                 _buildField(_nomeCtrl, 'Nome da Empresa',
@@ -164,7 +164,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
                                 _buildField(_cnpjCtrl, 'CNPJ', Icons.badge_outlined,
                                     enabled: false),
                                 const SizedBox(height: 12),
-                                _buildField(_razaoCtrl, 'RazÃ£o Social', Icons.apartment_outlined),
+                                _buildField(_razaoCtrl, 'Razão Social', Icons.apartment_outlined),
                                 const SizedBox(height: 12),
                                 _buildField(_emailCtrl, 'Email', Icons.email_outlined,
                                     enabled: false),

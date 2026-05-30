@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -67,8 +67,8 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'NotificaÃ§Ãµes de Problemas',
-            subtitle: 'ReclamaÃ§Ãµes pendentes e em anÃ¡lise',
+            title: 'Notificações de Problemas',
+            subtitle: 'Reclamações pendentes e em análise',
             icon: Icons.warning_amber_outlined,
             actions: [
               IconButton(

@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       return;
     }
     if (_tipo == null) {
-      setState(() => _erro = 'Selecione o tipo de usuÃ¡rio.');
+      setState(() => _erro = 'Selecione o tipo de usuário.');
       return;
     }
     setState(() => _loading = true);
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     } on ApiException catch (e) {
       if (mounted) setState(() => _erro = e.message);
     } catch (_) {
-      if (mounted) setState(() => _erro = 'NÃ£o foi possÃ­vel conectar ao servidor.');
+      if (mounted) setState(() => _erro = 'Não foi possível conectar ao servidor.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'GERENCIAMENTO DE RECLAMAÃ‡Ã•ES',
+                                'GERENCIAMENTO DE RECLAMAES',
                                 style: TextStyle(
                                   color: _cyan.withValues(alpha: 0.40),
                                   fontSize: 9,
@@ -268,7 +268,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         alignment: WrapAlignment.center,
                                         children: [
                                           Text(
-                                            'NÃ£o possui conta? ',
+                                            'Não possui conta? ',
                                             style: TextStyle(
                                               color: _cyan.withValues(alpha: 0.5),
                                               fontSize: 13,
@@ -378,7 +378,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TIPO DE USUÃRIO',
+            'TIPO DE USUÁRIO',
             style: TextStyle(
               color: _cyan.withValues(alpha: 0.55),
               fontSize: 10,

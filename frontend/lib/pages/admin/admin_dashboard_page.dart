@@ -77,7 +77,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       });
     } catch (_) {
       setState(() {
-        _error = 'Erro ao carregar reclamacoes.';
+        _error = 'Erro ao carregar reclamações.';
         _loading = false;
       });
     }
@@ -302,7 +302,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       _StatData('Pendentes',
           _reclamacoes.where((r) => r.idStatus == 1).length,
           Icons.schedule_outlined, Colors.orange),
-      _StatData('Em Analise',
+      _StatData('Em Análise',
           _reclamacoes.where((r) => r.idStatus == 2).length,
           Icons.search_outlined, Colors.blueAccent),
       _StatData('Resolvidas',
@@ -376,11 +376,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             const SizedBox(width: 8),
             _filterChip('Pendente', 1),
             const SizedBox(width: 8),
-            _filterChip('Em Analise', 2),
+            _filterChip('Em Análise', 2),
             const SizedBox(width: 8),
             _filterChip('Resolvida', 3),
             const SizedBox(width: 8),
-            _filterChip('Nao Resolvida', 4),
+            _filterChip('Não Resolvida', 4),
           ],
         ),
       ),
@@ -425,7 +425,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 size: 56, color: _cyan.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
             Text(
-              'Nenhuma reclamacao encontrada',
+              'Nenhuma reclamação encontrada',
               style: TextStyle(
                   color: _cyan.withValues(alpha: 0.55), fontSize: 15),
             ),
