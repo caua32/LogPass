@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../models/reclamacao_model.dart';
+import '../../core/app_header.dart';
 
 class DataConsultPage extends StatefulWidget {
   const DataConsultPage({super.key});
@@ -76,192 +77,244 @@ class _DataConsultPageState extends State<DataConsultPage> {
 
   @override
   Widget build(BuildContext context) {
-    final nome = context.read<AuthProvider>().user?.nome ?? '';
     return Scaffold(
       backgroundColor: const Color(0xFF0A1929),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          const SizedBox(height: 20),
-          Row(children: [
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF102A43),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF4CE0D2)),
-              ),
-              child: IconButton(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back, color: Color(0xFF4CE0D2)),
-              ),
+      body: Column(children: [
+        AppHeader(
+          title: 'Consulta de Dados',
+          subtitle: 'Reclamações recebidas',
+          icon: Icons.inventory_2_outlined,
+          actions: [
+            IconButton(
+              onPressed: _load,
+              icon: const Icon(Icons.refresh, color: Color(0xFF4CE0D2), size: 20),
+              tooltip: 'Atualizar',
             ),
-            const SizedBox(width: 16),
-            const Text('Consulta de Dados', style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
-            )),
-          ]),
-          const SizedBox(height: 20),
-          _buildCard(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Reclamações Recebidas', style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
-                )),
-                if (nome.isNotEmpty) Text('Bem-vindo, $nome!', style: const TextStyle(
-                  fontSize: 14, color: Color(0xFF4CE0D2), fontStyle: FontStyle.italic,
-                )),
-              ])),
-              ElevatedButton(
-                onPressed: _load,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CE0D2),
-                  foregroundColor: const Color(0xFF0A1929),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  elevation: 0,
-                ),
-                child: const Text('Atualizar'),
-              ),
-            ]),
-          ]),
-          const SizedBox(height: 20),
-          _buildCard(children: [
-            const Text('Filtros de Busca', style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
-            )),
-            const SizedBox(height: 15),
-            Row(children: [
-              Expanded(flex: 3, child: TextField(
-                controller: _searchCtrl,
-                style: const TextStyle(color: Color(0xFF4CE0D2)),
-                decoration: _inputDeco('Buscar por título ou descrição...'),
-              )),
-              const SizedBox(width: 10),
-              Expanded(flex: 2, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(18),
+            child: Column(children: [
+              // Busca e filtro
+              Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0A1929),
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: const Color(0xFF4CE0D2)),
+                  color: const Color(0xFF102A43),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
                 ),
-                child: DropdownButton<String>(
-                  value: _filtroStatus,
-                  dropdownColor: const Color(0xFF102A43),
-                  isExpanded: true,
-                  underline: const SizedBox.shrink(),
-                  style: const TextStyle(color: Color(0xFF4CE0D2)),
-                  items: const [
-                    DropdownMenuItem(value: 'todos', child: Text('Todos')),
-                    DropdownMenuItem(value: '1', child: Text('Pendente')),
-                    DropdownMenuItem(value: '2', child: Text('Em Análise')),
-                    DropdownMenuItem(value: '3', child: Text('Resolvida')),
-                    DropdownMenuItem(value: '4', child: Text('Não Resolvida')),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Icon(Icons.filter_alt_outlined,
+                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.7), size: 16),
+                      const SizedBox(width: 6),
+                      Text('Filtros', style: TextStyle(
+                        color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
+                        fontSize: 12, letterSpacing: 0.5,
+                      )),
+                    ]),
+                    const SizedBox(height: 10),
+                    Row(children: [
+                      Expanded(flex: 3, child: TextField(
+                        controller: _searchCtrl,
+                        style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 13),
+                        decoration: appInputDeco('Buscar por título ou descrição...',
+                            prefixIcon: Icons.search).copyWith(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        ),
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(flex: 2, child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0A1929).withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+                        ),
+                        child: DropdownButton<String>(
+                          value: _filtroStatus,
+                          dropdownColor: const Color(0xFF102A43),
+                          isExpanded: true,
+                          underline: const SizedBox.shrink(),
+                          style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 13),
+                          iconEnabledColor: const Color(0xFF4CE0D2),
+                          items: const [
+                            DropdownMenuItem(value: 'todos', child: Text('Todos')),
+                            DropdownMenuItem(value: '1', child: Text('Pendente')),
+                            DropdownMenuItem(value: '2', child: Text('Em Análise')),
+                            DropdownMenuItem(value: '3', child: Text('Resolvida')),
+                            DropdownMenuItem(value: '4', child: Text('Não Resolvida')),
+                          ],
+                          onChanged: (v) {
+                            setState(() => _filtroStatus = v ?? 'todos');
+                            _applyFilter();
+                          },
+                        ),
+                      )),
+                    ]),
                   ],
-                  onChanged: (v) { setState(() => _filtroStatus = v ?? 'todos'); _applyFilter(); },
                 ),
-              )),
-            ]),
-          ]),
-          const SizedBox(height: 20),
-          _buildCard(children: [
-            if (_loading)
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  CircularProgressIndicator(color: Color(0xFF4CE0D2)),
-                  SizedBox(width: 16),
-                  Text('Carregando...', style: TextStyle(color: Color(0xFF4CE0D2))),
-                ]),
-              )
-            else if (_error != null)
-              Text(_error!, style: const TextStyle(color: Color(0xFFFF6B6B)))
-            else if (_filtradas.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text('Nenhuma reclamação encontrada.', style: TextStyle(color: Color(0xFF4CE0D2)), textAlign: TextAlign.center),
-              )
-            else ...[
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  headingRowColor: WidgetStateProperty.all(const Color(0xFF0A1929)),
-                  dataRowColor: WidgetStateProperty.all(const Color(0xFF102A43)),
-                  border: TableBorder.all(color: const Color(0xFF4CE0D2)),
-                  columns: const [
-                    DataColumn(label: Text('ID', style: TextStyle(color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold))),
-                    DataColumn(label: Text('Título', style: TextStyle(color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold))),
-                    DataColumn(label: Text('Consumidor', style: TextStyle(color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold))),
-                    DataColumn(label: Text('Status', style: TextStyle(color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold))),
-                  ],
-                  rows: _paginadas.map((r) => DataRow(cells: [
-                    DataCell(Text('#${r.id}', style: const TextStyle(color: Color(0xFF4CE0D2)))),
-                    DataCell(Text(r.titulo, style: const TextStyle(color: Color(0xFF4CE0D2)))),
-                    DataCell(Text(r.nomeConsumidor ?? '-', style: const TextStyle(color: Color(0xFF4CE0D2)))),
-                    DataCell(Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(color: r.statusColor, borderRadius: BorderRadius.circular(8)),
-                      child: Text(r.statusNome, style: const TextStyle(color: Colors.white, fontSize: 11)),
-                    )),
-                  ])).toList(),
+              ),
+              const SizedBox(height: 14),
+              // Resultados
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF102A43),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
                 ),
+                child: _loading
+                    ? const Padding(
+                        padding: EdgeInsets.all(32),
+                        child: Center(child: CircularProgressIndicator(
+                            color: Color(0xFF4CE0D2), strokeWidth: 2)),
+                      )
+                    : _error != null
+                        ? Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Text(_error!, style: const TextStyle(color: Color(0xFFFF6B6B))),
+                          )
+                        : _filtradas.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(32),
+                                child: Center(child: Text('Nenhuma reclamação encontrada.',
+                                    style: TextStyle(color: Color(0xFF4CE0D2)))),
+                              )
+                            : Column(children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 2),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('${_filtradas.length} resultado${_filtradas.length != 1 ? 's' : ''}',
+                                          style: TextStyle(
+                                            color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                                            fontSize: 12,
+                                          )),
+                                      Text('Pág. $_page/$_totalPages',
+                                          style: TextStyle(
+                                            color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
+                                            fontSize: 12,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(color: Color(0xFF4CE0D2), height: 1),
+                                ..._paginadas.map(_buildRow),
+                                if (_totalPages > 1) ...[
+                                  const Divider(color: Color(0xFF4CE0D2), height: 1),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        _pageBtn(Icons.chevron_left,
+                                            _page > 1 ? () => setState(() => _page--) : null),
+                                        const SizedBox(width: 16),
+                                        Text('$_page / $_totalPages', style: const TextStyle(
+                                          color: Color(0xFF4CE0D2), fontSize: 13,
+                                        )),
+                                        const SizedBox(width: 16),
+                                        _pageBtn(Icons.chevron_right,
+                                            _page < _totalPages ? () => setState(() => _page++) : null),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ]),
               ),
               const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('Página $_page de $_totalPages (${_filtradas.length} resultados)',
-                    style: const TextStyle(color: Color(0xFF4CE0D2))),
-                Row(children: [
-                  ElevatedButton(
-                    onPressed: _page > 1 ? () => setState(() => _page--) : null,
-                    style: _btnStyle(),
-                    child: const Text('Anterior'),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _page < _totalPages ? () => setState(() => _page++) : null,
-                    style: _btnStyle(),
-                    child: const Text('Próxima'),
-                  ),
-                ]),
-              ]),
-            ],
-          ]),
-          const SizedBox(height: 40),
-        ]),
-      ),
+            ]),
+          ),
+        ),
+      ]),
     );
   }
 
-  Widget _buildCard({required List<Widget> children}) {
+  Widget _buildRow(Reclamacao r) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF4CE0D2)),
-        boxShadow: [BoxShadow(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3), blurRadius: 15)],
+        border: Border(bottom: BorderSide(
+          color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+        )),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
+      child: Row(children: [
+        SizedBox(
+          width: 36,
+          child: Text('#${r.id}', style: TextStyle(
+            color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+            fontSize: 11, fontWeight: FontWeight.bold,
+          )),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(r.titulo, style: const TextStyle(
+            color: Color(0xFF4CE0D2), fontSize: 13, fontWeight: FontWeight.w500,
+          ), overflow: TextOverflow.ellipsis),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: Text(r.nomeConsumidor ?? '-', style: TextStyle(
+            color: const Color(0xFF4CE0D2).withValues(alpha: 0.65), fontSize: 12,
+          ), overflow: TextOverflow.ellipsis),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: r.statusColor.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: r.statusColor.withValues(alpha: 0.4)),
+          ),
+          child: Text(r.statusNome, style: TextStyle(
+            color: r.statusColor, fontSize: 10, fontWeight: FontWeight.bold,
+          )),
+        ),
+        const SizedBox(width: 6),
+        GestureDetector(
+          onTap: () => context.go('/chat/${r.id}', extra: {'titulo': r.titulo}),
+          child: Container(
+            width: 30, height: 30,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+            ),
+            child: const Icon(Icons.chat_bubble_outline,
+                color: Color(0xFF4CE0D2), size: 15),
+          ),
+        ),
+      ]),
     );
   }
 
-  InputDecoration _inputDeco(String hint) => InputDecoration(
-    hintText: hint,
-    hintStyle: const TextStyle(color: Color(0xFF4CE0D2)),
-    filled: true,
-    fillColor: const Color(0xFF0A1929),
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(color: Color(0xFF4CE0D2))),
-    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(color: Color(0xFF4CE0D2))),
-    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(color: Color(0xFF4CE0D2), width: 2)),
-    contentPadding: const EdgeInsets.all(15),
-  );
-
-  ButtonStyle _btnStyle() => ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFF4CE0D2),
-    foregroundColor: const Color(0xFF0A1929),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-  );
+  Widget _pageBtn(IconData icon, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 32, height: 32,
+        decoration: BoxDecoration(
+          color: onTap != null
+              ? const Color(0xFF4CE0D2).withValues(alpha: 0.12)
+              : const Color(0xFF4CE0D2).withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: onTap != null
+                ? const Color(0xFF4CE0D2).withValues(alpha: 0.4)
+                : const Color(0xFF4CE0D2).withValues(alpha: 0.1),
+          ),
+        ),
+        child: Icon(icon,
+            color: onTap != null
+                ? const Color(0xFF4CE0D2)
+                : const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+            size: 18),
+      ),
+    );
+  }
 }

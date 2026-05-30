@@ -19,7 +19,13 @@ exports.registrar = async (req, res) => {
       'INSERT INTO usuario (nome, email, senha, tipo) VALUES ($1, $2, $3, $4) RETURNING id, nome, email, tipo',
       [nome, email, hashed, tipo]
     );
-    res.status(201).json({ message: 'Usuário cadastrado com sucesso!', usuario: result.rows[0] });
+    const user = result.rows[0];
+    const token = jwt.sign(
+      { id: user.id, email: user.email, tipo: user.tipo },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    res.status(201).json({ message: 'Usuário cadastrado com sucesso!', token, usuario: user });
   } catch (err) {
     if (err.code === '23505') {
       return res.status(409).json({ message: 'Email já cadastrado.' });

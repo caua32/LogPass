@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const empresaController = require('../controllers/empresaController');
 const verifyToken = require('../middleware/verifyToken');
 const validate = require('../middleware/validate');
+const { requireEmpresa } = require('../middleware/requireTipo');
 
 const addEmpresaRules = [
   body('nomeempresa').trim().notEmpty().withMessage('Nome da empresa é obrigatório.'),
@@ -18,12 +19,22 @@ const addEmpresaRules = [
   body('cep').optional().trim(),
 ];
 
-router.post('/add-empresa', verifyToken, addEmpresaRules, validate, empresaController.addEmpresa);
+const updateEmpresaRules = [
+  body('nomeempresa').optional().trim().notEmpty().withMessage('Nome da empresa não pode ser vazio.'),
+  body('contato').optional().trim(),
+  body('logradouro').optional().trim(),
+  body('numero').optional().trim(),
+  body('bairro').optional().trim(),
+  body('cidade').optional().trim(),
+  body('cep').optional().trim(),
+];
+
+router.post('/add-empresa', verifyToken, requireEmpresa, addEmpresaRules, validate, empresaController.addEmpresa);
 
 // Buscar perfil da empresa logada
-router.get('/empresa/perfil', verifyToken, empresaController.getPerfil);
+router.get('/empresa/perfil', verifyToken, requireEmpresa, empresaController.getPerfil);
 
 // Atualizar perfil da empresa
-router.put('/empresa/perfil', verifyToken, empresaController.updatePerfil);
+router.put('/empresa/perfil', verifyToken, requireEmpresa, updateEmpresaRules, validate, empresaController.updatePerfil);
 
 module.exports = router;

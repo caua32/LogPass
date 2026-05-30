@@ -1,7 +1,11 @@
--- LogPass - Schema PostgreSQL Unificado
--- Substitui o schema SQL Server anterior (SQLQuery3.sql)
+-- LogPass - Schema PostgreSQL
+-- Execute: psql -U postgres -d logpass -f schema_postgresql.sql
 
--- Tabela de autenticação (empresa e consumidor)
+-- ============================================================
+-- TABELAS
+-- ============================================================
+
+-- Autenticação (empresa e consumidor)
 CREATE TABLE usuario (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -52,7 +56,7 @@ CREATE TABLE status_reclamacao (
     descricao VARCHAR(50) NOT NULL
 );
 
--- Reclamações (vinculadas a empresa e consumidor)
+-- Reclamações
 CREATE TABLE reclamacao (
     id SERIAL PRIMARY KEY,
     empresa_id INT NOT NULL REFERENCES empresa(id) ON DELETE CASCADE,
@@ -74,23 +78,40 @@ CREATE TABLE permissao_funcionario (
     UNIQUE (funcionario_id, empresa_id)
 );
 
--- Índices para performance
-CREATE INDEX idx_usuario_email ON usuario(email);
-CREATE INDEX idx_consumidor_cpf ON consumidor(cpf);
-CREATE INDEX idx_empresa_cnpj ON empresa(cnpj);
-CREATE INDEX idx_reclamacao_empresa ON reclamacao(empresa_id);
-CREATE INDEX idx_reclamacao_status ON reclamacao(status_id);
-CREATE INDEX idx_reclamacao_data ON reclamacao(data_abertura);
+-- Mensagens de chat por reclamação
+CREATE TABLE mensagem_chat (
+    id SERIAL PRIMARY KEY,
+    reclamacao_id INT NOT NULL REFERENCES reclamacao(id) ON DELETE CASCADE,
+    remetente_id INT NOT NULL,
+    remetente_tipo VARCHAR(20) NOT NULL CHECK (remetente_tipo IN ('consumidor', 'empresa', 'admin')),
+    mensagem TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
 
--- Dados iniciais: status
+-- ============================================================
+-- ÍNDICES
+-- ============================================================
+
+CREATE INDEX idx_usuario_email      ON usuario(email);
+CREATE INDEX idx_consumidor_cpf     ON consumidor(cpf);
+CREATE INDEX idx_empresa_cnpj       ON empresa(cnpj);
+CREATE INDEX idx_reclamacao_empresa ON reclamacao(empresa_id);
+CREATE INDEX idx_reclamacao_status  ON reclamacao(status_id);
+CREATE INDEX idx_reclamacao_data    ON reclamacao(data_abertura);
+CREATE INDEX idx_chat_reclamacao    ON mensagem_chat(reclamacao_id);
+CREATE INDEX idx_chat_created       ON mensagem_chat(created_at);
+
+-- ============================================================
+-- DADOS INICIAIS
+-- ============================================================
+
 INSERT INTO status_reclamacao (descricao) VALUES
     ('Pendente'),
     ('Em Análise'),
     ('Resolvida'),
     ('Não Resolvida');
 
--- Funcionário admin padrão (senha: logpass2024)
--- IMPORTANTE: gere o hash com bcrypt antes de inserir em produção
--- bcrypt.hash('logpass2024', 10) → trocar o valor abaixo
+-- Admin padrão (senha: logpass2024)
+-- Gere o hash antes de usar em produção: bcrypt.hash('logpass2024', 10)
 INSERT INTO funcionario (nome, email, senha, cargo) VALUES
     ('Administrador', 'admin@logpass.com', '$2a$10$placeholder_hash_aqui', 'admin');

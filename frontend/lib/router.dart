@@ -12,6 +12,8 @@ import 'pages/empresa/data_consult_page.dart';
 import 'pages/empresa/problems_notification_page.dart';
 import 'pages/empresa/reports_page.dart';
 import 'pages/admin/admin_dashboard_page.dart';
+import 'pages/chat/chat_page.dart';
+import 'pages/consumidor/minhas_reclamacoes_page.dart';
 
 GoRouter buildRouter(AuthProvider auth) {
   return GoRouter(
@@ -26,6 +28,13 @@ GoRouter buildRouter(AuthProvider auth) {
         return '/login';
       }
       if (loggedIn && publicPaths.contains(loc)) return '/dashboard';
+      if (loggedIn && !loc.startsWith('/admin')) {
+        final tipo = auth.tipo;
+        const empresaOnly = ['/empresa/consulta', '/empresa/problemas', '/empresa/relatorios', '/perfil/empresa'];
+        const consumidorOnly = ['/nova-reclamacao', '/satisfacao', '/perfil/consumidor', '/minhas-reclamacoes'];
+        if (tipo == 'consumidor' && empresaOnly.contains(loc)) return '/dashboard';
+        if (tipo == 'empresa' && consumidorOnly.contains(loc)) return '/dashboard';
+      }
       return null;
     },
     routes: [
@@ -41,6 +50,16 @@ GoRouter buildRouter(AuthProvider auth) {
       GoRoute(path: '/empresa/problemas', builder: (c, s) => const ProblemsNotificationPage()),
       GoRoute(path: '/empresa/relatorios', builder: (c, s) => const ReportsPage()),
       GoRoute(path: '/admin/dashboard', builder: (c, s) => const AdminDashboardPage()),
+      GoRoute(path: '/minhas-reclamacoes', builder: (c, s) => const MinhasReclamacoesPage()),
+      GoRoute(
+        path: '/chat/:id',
+        builder: (c, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '') ?? 0;
+          final extra = s.extra as Map<String, dynamic>?;
+          final titulo = extra?['titulo'] as String? ?? 'Reclamação #$id';
+          return ChatPage(reclamacaoId: id, titulo: titulo);
+        },
+      ),
     ],
   );
 }

@@ -4,6 +4,8 @@ const { body } = require('express-validator');
 const reclamacaoController = require('../controllers/reclamacaoController');
 const verifyToken = require('../middleware/verifyToken');
 const validate = require('../middleware/validate');
+const requireAdmin = require('../middleware/requireAdmin');
+const { requireConsumidor, requireEmpresa } = require('../middleware/requireTipo');
 
 const criarRules = [
   body('empresa_cnpj')
@@ -14,9 +16,9 @@ const criarRules = [
   body('forma_solucao').optional().trim(),
 ];
 
-router.post('/reclamacao', verifyToken, criarRules, validate, reclamacaoController.criar);
-router.get('/reclamacao/empresa', verifyToken, reclamacaoController.getByEmpresa);
-router.get('/reclamacao/consumidor', verifyToken, reclamacaoController.getByConsumidor);
-router.put('/reclamacao/:id/status', verifyToken, reclamacaoController.updateStatus);
+router.post('/reclamacao', verifyToken, requireConsumidor, criarRules, validate, reclamacaoController.criar);
+router.get('/reclamacao/empresa', verifyToken, requireEmpresa, reclamacaoController.getByEmpresa);
+router.get('/reclamacao/consumidor', verifyToken, requireConsumidor, reclamacaoController.getByConsumidor);
+router.put('/reclamacao/:id/status', verifyToken, requireAdmin, reclamacaoController.updateStatus);
 
 module.exports = router;

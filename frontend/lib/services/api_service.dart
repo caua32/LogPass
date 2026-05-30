@@ -21,7 +21,7 @@ class ApiService {
     final body = jsonDecode(res.body);
     if (res.statusCode < 200 || res.statusCode >= 300) {
       if (body is Map) {
-        throw ApiException(body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
+        throw ApiException(body['message'] ?? body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
       }
       throw ApiException('Erro ${res.statusCode}');
     }
@@ -32,7 +32,7 @@ class ApiService {
     if (res.statusCode < 200 || res.statusCode >= 300) {
       try {
         final body = jsonDecode(res.body) as Map<String, dynamic>;
-        throw ApiException(body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
+        throw ApiException(body['message'] ?? body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
       } catch (e) {
         if (e is ApiException) rethrow;
         throw ApiException('Erro ${res.statusCode}');
@@ -167,8 +167,26 @@ class ApiService {
   static Future<void> updateReclamacaoStatus(String token, int id, int idStatus) async {
     final res = await http
         .put(Uri.parse('$kBaseUrl/reclamacao/$id/status'),
-            headers: _headers(token: token), body: jsonEncode({'id_status': idStatus}))
+            headers: _headers(token: token), body: jsonEncode({'status_id': idStatus}))
         .timeout(_timeout);
     _decode(res);
+  }
+
+  // Chat
+  static Future<List<dynamic>> getMensagensChat(String token, int reclamacaoId) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/chat/$reclamacaoId'), headers: _headers(token: token))
+        .timeout(_timeout);
+    final body = _decode(res);
+    return body['mensagens'] as List<dynamic>? ?? [];
+  }
+
+  static Future<Map<String, dynamic>> enviarMensagemChat(
+      String token, int reclamacaoId, String mensagem) async {
+    final res = await http
+        .post(Uri.parse('$kBaseUrl/chat/$reclamacaoId'),
+            headers: _headers(token: token), body: jsonEncode({'mensagem': mensagem}))
+        .timeout(_timeout);
+    return _decode(res);
   }
 }

@@ -6,16 +6,16 @@ import '../../services/api_service.dart';
 import '../../models/reclamacao_model.dart';
 import '../../core/app_header.dart';
 
-class ProblemsNotificationPage extends StatefulWidget {
-  const ProblemsNotificationPage({super.key});
+class MinhasReclamacoesPage extends StatefulWidget {
+  const MinhasReclamacoesPage({super.key});
 
   @override
-  State<ProblemsNotificationPage> createState() => _ProblemsNotificationPageState();
+  State<MinhasReclamacoesPage> createState() => _MinhasReclamacoesPageState();
 }
 
-class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
+class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
     with SingleTickerProviderStateMixin {
-  List<Reclamacao> _urgentes = [];
+  List<Reclamacao> _reclamacoes = [];
   bool _loading = true;
   String? _error;
 
@@ -41,16 +41,15 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
     setState(() { _loading = true; _error = null; });
     final token = context.read<AuthProvider>().token!;
     try {
-      final lista = await ApiService.getReclamacoesEmpresa(token);
-      final todas = lista.map((e) => Reclamacao.fromJson(e as Map<String, dynamic>)).toList();
+      final lista = await ApiService.getReclamacoesConsumidor(token);
       setState(() {
-        _urgentes = todas.where((r) => r.idStatus == 1 || r.idStatus == 2).toList();
+        _reclamacoes = lista.map((e) => Reclamacao.fromJson(e as Map<String, dynamic>)).toList();
         _loading = false;
       });
     } on ApiException catch (e) {
       setState(() { _error = e.message; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Erro ao carregar alertas.'; _loading = false; });
+      setState(() { _error = 'Erro ao carregar solicitações.'; _loading = false; });
     }
   }
 
@@ -62,9 +61,9 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
-            title: 'Notificações de Problemas',
-            subtitle: 'Reclamações pendentes e em análise',
-            icon: Icons.warning_amber_outlined,
+            title: 'Minhas Solicitações',
+            subtitle: 'Histórico e acompanhamento',
+            icon: Icons.list_alt_outlined,
             actions: [
               IconButton(
                 onPressed: _load,
@@ -79,7 +78,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                     color: Color(0xFF4CE0D2), strokeWidth: 2))
                 : _error != null
                     ? _buildError()
-                    : _urgentes.isEmpty
+                    : _reclamacoes.isEmpty
                         ? _buildEmpty()
                         : _buildList(),
           ),
@@ -116,17 +115,23 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
             shape: BoxShape.circle,
             border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
           ),
-          child: const Icon(Icons.check_circle_outline,
-              size: 42, color: Color(0xFF4CE0D2)),
+          child: const Icon(Icons.inbox_outlined, size: 42, color: Color(0xFF4CE0D2)),
         ),
         const SizedBox(height: 16),
-        const Text('Tudo em dia!', style: TextStyle(
+        const Text('Nenhuma solicitação', style: TextStyle(
           fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF4CE0D2),
         )),
         const SizedBox(height: 6),
-        Text('Nenhum alerta pendente no momento.', style: TextStyle(
+        Text('Você ainda não abriu nenhuma solicitação.', style: TextStyle(
           fontSize: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
         )),
+        const SizedBox(height: 20),
+        TextButton.icon(
+          onPressed: () => context.push('/nova-reclamacao'),
+          icon: const Icon(Icons.add_circle_outline, size: 16, color: Color(0xFF4CE0D2)),
+          label: const Text('Abrir nova solicitação',
+              style: TextStyle(color: Color(0xFF4CE0D2))),
+        ),
       ],
     ));
   }
@@ -141,14 +146,16 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.15),
+                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
+                  border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.3)),
                 ),
-                child: Text('${_urgentes.length} alerta${_urgentes.length != 1 ? 's' : ''}',
-                    style: const TextStyle(
-                      color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold,
-                    )),
+                child: Text(
+                  '${_reclamacoes.length} solicitaç${_reclamacoes.length != 1 ? 'ões' : 'ão'}',
+                  style: const TextStyle(
+                    color: Color(0xFF4CE0D2), fontSize: 12, fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -156,8 +163,8 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(18),
-            itemCount: _urgentes.length,
-            itemBuilder: (_, i) => _buildCard(_urgentes[i]),
+            itemCount: _reclamacoes.length,
+            itemBuilder: (_, i) => _buildCard(_reclamacoes[i]),
           ),
         ),
       ],
@@ -176,7 +183,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         children: [
           Container(
             width: 4,
-            height: 130,
+            height: 120,
             decoration: BoxDecoration(
               color: r.statusColor,
               borderRadius: const BorderRadius.only(
@@ -190,9 +197,11 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(child: Text(r.titulo, style: const TextStyle(
-                    color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 14,
-                  ), overflow: TextOverflow.ellipsis)),
+                  Expanded(
+                    child: Text(r.titulo, style: const TextStyle(
+                      color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 14,
+                    ), overflow: TextOverflow.ellipsis),
+                  ),
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -206,23 +215,25 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                     )),
                   ),
                 ]),
-                const SizedBox(height: 6),
-                Text(r.descricao, maxLines: 2, overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.65),
-                      fontSize: 12,
-                    )),
-                if (r.nomeConsumidor != null) ...[
-                  const SizedBox(height: 8),
+                if (r.nomeEmpresa != null) ...[
+                  const SizedBox(height: 6),
                   Row(children: [
-                    Icon(Icons.person_outline,
+                    Icon(Icons.business_outlined,
                         size: 13, color: const Color(0xFF4CE0D2).withValues(alpha: 0.5)),
                     const SizedBox(width: 4),
-                    Text(r.nomeConsumidor!, style: TextStyle(
-                      fontSize: 11, color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
-                    )),
+                    Expanded(
+                      child: Text(r.nomeEmpresa!, style: TextStyle(
+                        fontSize: 12, color: const Color(0xFF4CE0D2).withValues(alpha: 0.65),
+                      ), overflow: TextOverflow.ellipsis),
+                    ),
                   ]),
                 ],
+                const SizedBox(height: 8),
+                Text(r.descricao, maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
+                      fontSize: 11,
+                    )),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -236,13 +247,13 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.chat_bubble_outline,
+                            Icon(Icons.chat_bubble_outline,
                                 color: Color(0xFF4CE0D2), size: 13),
-                            const SizedBox(width: 5),
-                            const Text('Chat', style: TextStyle(
+                            SizedBox(width: 5),
+                            Text('Chat', style: TextStyle(
                               color: Color(0xFF4CE0D2), fontSize: 11, fontWeight: FontWeight.w600,
                             )),
                           ],

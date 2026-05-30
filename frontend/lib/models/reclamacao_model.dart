@@ -40,12 +40,22 @@ class Reclamacao {
   factory Reclamacao.fromJson(Map<String, dynamic> json) {
     return Reclamacao(
       id: json['id'] ?? 0,
-      titulo: json['titulo'] ?? '',
-      descricao: json['descricao'] ?? '',
-      idStatus: json['id_status'] ?? json['status'] ?? 1,
-      nomeEmpresa: json['nome_empresa'] ?? json['empresa'],
-      nomeConsumidor: json['nome_consumidor'] ?? json['consumidor'],
-      createdAt: json['created_at']?.toString(),
+      titulo: json['numero_pedido'] ?? json['titulo'] ?? '',
+      descricao: json['motivo'] ?? json['descricao'] ?? '',
+      idStatus: _parseStatus(json),
+      nomeEmpresa: json['nomeempresa'] ?? json['nome_empresa'] ?? json['empresa'],
+      nomeConsumidor: json['consumidor_nome'] ?? json['nome_consumidor'] ?? json['consumidor'],
+      createdAt: (json['data_abertura'] ?? json['created_at'])?.toString(),
     );
+  }
+
+  static int _parseStatus(Map<String, dynamic> json) {
+    final raw = json['status_id'] ?? json['id_status'] ?? json['status'];
+    if (raw is int) return raw;
+    if (raw is String) {
+      const map = {'Pendente': 1, 'Em Análise': 2, 'Resolvida': 3, 'Não Resolvida': 4};
+      return map[raw] ?? 1;
+    }
+    return 1;
   }
 }

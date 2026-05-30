@@ -158,7 +158,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             color: Color(0xFF4CE0D2), fontWeight: FontWeight.bold, fontSize: 18,
           )),
           if (_nomeAdmin != null)
-            Text('Admin â€¢ $_nomeAdmin', style: const TextStyle(
+            Text('Admin • $_nomeAdmin', style: const TextStyle(
               color: Color(0xFF4CE0D2), fontSize: 12, fontWeight: FontWeight.normal,
             )),
         ]),

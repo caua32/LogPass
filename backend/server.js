@@ -8,6 +8,7 @@ const empresaRoutes = require('./routes/empresaRoutes');
 const consumidorRoutes = require('./routes/consumidorRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const reclamacaoRoutes = require('./routes/reclamacaoRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use('/api', empresaRoutes);
 app.use('/api', consumidorRoutes);
 app.use('/api', funcionarioRoutes);
 app.use('/api', reclamacaoRoutes);
+app.use('/api', chatRoutes);
 
 // Handler de erros global
 app.use((err, req, res, next) => {
