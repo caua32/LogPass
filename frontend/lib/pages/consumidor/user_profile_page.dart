@@ -193,7 +193,7 @@ class _UserProfilePageState extends State<UserProfilePage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
+        color: const Color(0xFF0D2137),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
       ),

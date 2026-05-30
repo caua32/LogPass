@@ -184,7 +184,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                       TextFormField(
                         controller: _cnpjCtrl,
                         keyboardType: TextInputType.text,
-                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
                         decoration: appInputDeco('00.000.000/0000-00'),
                         validator: (v) => (v == null || v.isEmpty)
                             ? 'Informe o CNPJ da empresa' : null,
@@ -210,7 +210,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                     children: [
                       TextFormField(
                         controller: _numeroPedidoCtrl,
-                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
                         decoration: appInputDeco('Ex: 12345'),
                         validator: (v) => (v == null || v.isEmpty)
                             ? 'Informe o número do pedido' : null,
@@ -225,7 +225,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                       TextFormField(
                         controller: _motivoCtrl,
                         maxLines: 4,
-                        style: const TextStyle(color: Color(0xFF44CABD), fontSize: 14),
+                        style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
                         decoration: appInputDeco('Descreva detalhadamente o que aconteceu...'),
                         validator: (v) => (v == null || v.trim().length < 10)
                             ? 'Descreva o problema (mínimo 10 caracteres)' : null,

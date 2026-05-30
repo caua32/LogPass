@@ -231,10 +231,10 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
       physics: const NeverScrollableScrollPhysics(),
       itemCount: items.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         mainAxisSpacing: 14,
         crossAxisSpacing: 14,
-        childAspectRatio: 0.85,
+        childAspectRatio: 1.55,
       ),
       itemBuilder: (_, i) => _buildMenuCard(items[i], i),
     );
@@ -249,50 +249,61 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         scale: 0.65 + 0.35 * value,
         child: Opacity(
           opacity: value.clamp(0.0, 1.0),
-          child: GestureDetector(
-            onTap: () => context.push(item.route),
-            child: Container(
-              decoration: BoxDecoration(
-                color: _card,
+          child: Semantics(
+            button: true,
+            label: item.label.replaceAll('\n', ' '),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.push(item.route),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _cyan.withValues(alpha: 0.18)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.25),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: _cyan.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: _cyan.withValues(alpha: 0.25)),
-                    ),
-                    child: Icon(item.icon, color: _cyan, size: 26),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      item.label,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFCCEEEC),
-                        height: 1.3,
-                        letterSpacing: 0.1,
+                splashColor: _cyan.withValues(alpha: 0.12),
+                highlightColor: _cyan.withValues(alpha: 0.06),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: _card,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: _cyan.withValues(alpha: 0.18)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
-                      textAlign: TextAlign.center,
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: _cyan.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: _cyan.withValues(alpha: 0.25)),
+                          ),
+                          child: Icon(item.icon, color: _cyan, size: 22),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            item.label.replaceAll('\n', ' '),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFCCEEEC),
+                              height: 1.3,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -327,10 +338,10 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       ? 'Verifique as notificações regularmente para manter a satisfação dos clientes.'
                       : 'Use Nova Solicitação sempre que precisar registrar um problema com um produto.',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: _cyan.withValues(alpha: 0.60),
+                    fontSize: 13,
+                    color: _cyan.withValues(alpha: 0.70),
                     fontStyle: FontStyle.italic,
-                    height: 1.4,
+                    height: 1.5,
                   ),
                 ),
               ),

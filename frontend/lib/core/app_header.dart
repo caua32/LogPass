@@ -97,7 +97,7 @@ class AppHeader extends StatelessWidget {
                     subtitle!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: const Color(0xFF44CABD).withValues(alpha: 0.55),
+                      color: const Color(0xFF44CABD).withValues(alpha: 0.70),
                       letterSpacing: 0.1,
                     ),
                   ),

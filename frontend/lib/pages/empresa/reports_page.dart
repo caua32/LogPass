@@ -148,9 +148,9 @@ class _ReportsPageState extends State<ReportsPage>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,9 +176,9 @@ class _ReportsPageState extends State<ReportsPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(children: [
         Container(
@@ -212,9 +212,9 @@ class _ReportsPageState extends State<ReportsPage>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.18)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -253,9 +253,9 @@ class _ReportsPageState extends State<ReportsPage>
     final recentes = _reclamacoes.take(5).toList();
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.18)),
       ),
       child: Column(children: [
         Padding(

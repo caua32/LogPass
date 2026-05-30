@@ -160,10 +160,15 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(18),
-            itemCount: _urgentes.length,
-            itemBuilder: (_, i) => _buildCard(_urgentes[i], i),
+          child: RefreshIndicator(
+            onRefresh: _load,
+            color: const Color(0xFF44CABD),
+            backgroundColor: const Color(0xFF0D2137),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(18),
+              itemCount: _urgentes.length,
+              itemBuilder: (_, i) => _buildCard(_urgentes[i], i),
+            ),
           ),
         ),
       ],

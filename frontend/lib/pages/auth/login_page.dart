@@ -174,12 +174,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'GERENCIAMENTO DE RECLAMAES',
+                                'Gerenciamento de Reclamações',
                                 style: TextStyle(
-                                  color: _cyan.withValues(alpha: 0.40),
-                                  fontSize: 9,
-                                  letterSpacing: 2.5,
-                                  fontWeight: FontWeight.w600,
+                                  color: _cyan.withValues(alpha: 0.55),
+                                  fontSize: 12,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],

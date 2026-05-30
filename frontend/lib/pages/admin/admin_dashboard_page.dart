@@ -433,10 +433,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         ),
       );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
-      itemCount: _filtradas.length,
-      itemBuilder: (_, i) => _buildCard(_filtradas[i], i),
+    return RefreshIndicator(
+      onRefresh: _load,
+      color: _cyan,
+      backgroundColor: _card,
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+        itemCount: _filtradas.length,
+        itemBuilder: (_, i) => _buildCard(_filtradas[i], i),
+      ),
     );
   }
 

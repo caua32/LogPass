@@ -167,10 +167,15 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(18),
-            itemCount: _reclamacoes.length,
-            itemBuilder: (_, i) => _buildCard(_reclamacoes[i], i),
+          child: RefreshIndicator(
+            onRefresh: _load,
+            color: const Color(0xFF44CABD),
+            backgroundColor: const Color(0xFF0D2137),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(18),
+              itemCount: _reclamacoes.length,
+              itemBuilder: (_, i) => _buildCard(_reclamacoes[i], i),
+            ),
           ),
         ),
       ],

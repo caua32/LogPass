@@ -189,12 +189,12 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'CRIE SUA CONTA',
+                              'Crie sua conta',
                               style: TextStyle(
-                                color: _cyan.withValues(alpha: 0.40),
-                                fontSize: 9,
-                                letterSpacing: 2.5,
-                                fontWeight: FontWeight.w600,
+                                color: _cyan.withValues(alpha: 0.55),
+                                fontSize: 12,
+                                letterSpacing: 0.5,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],

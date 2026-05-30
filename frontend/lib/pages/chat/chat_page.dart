@@ -236,7 +236,7 @@ class _ChatPageState extends State<ChatPage> {
                   const SizedBox(height: 4),
                   Text(hora,
                       style: TextStyle(
-                          color: _cyan.withValues(alpha: 0.45), fontSize: 10)),
+                          color: _cyan.withValues(alpha: 0.55), fontSize: 11)),
                 ],
               ),
             ),
@@ -288,11 +288,14 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         const SizedBox(width: 10),
-        GestureDetector(
+        Semantics(
+          button: true,
+          label: 'Enviar mensagem',
+          child: GestureDetector(
           onTap: _enviar,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 44, height: 44,
+            width: 48, height: 48,
             decoration: BoxDecoration(
               color: _enviando
                   ? _cyan.withValues(alpha: 0.3)
@@ -314,6 +317,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   )
                 : const Icon(Icons.send_rounded, color: Color(0xFF0A1929), size: 20),
+          ),
           ),
         ),
       ]),

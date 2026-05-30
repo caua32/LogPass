@@ -100,7 +100,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF102A43),
+                  color: const Color(0xFF0D2137),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
                 ),
@@ -136,7 +136,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
                         ),
                         child: DropdownButton<String>(
                           value: _filtroStatus,
-                          dropdownColor: const Color(0xFF102A43),
+                          dropdownColor: const Color(0xFF0D2137),
                           isExpanded: true,
                           underline: const SizedBox.shrink(),
                           style: const TextStyle(color: Color(0xFF44CABD), fontSize: 13),
@@ -162,7 +162,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
               // Resultados
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF102A43),
+                  color: const Color(0xFF0D2137),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.2)),
                 ),
