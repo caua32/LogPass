@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       body: Stack(
         children: [
-          const ParticlesBackground(count: 50, showLines: true),
+          const ParticlesBackground(count: 100, showLines: true),
           Container(
             decoration: BoxDecoration(
               gradient: RadialGradient(

@@ -136,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
       backgroundColor: _bg,
       body: Stack(
         children: [
-          const ParticlesBackground(count: 50, showLines: true),
+          const ParticlesBackground(count: 100, showLines: true),
           Container(
             decoration: BoxDecoration(
               gradient: RadialGradient(
