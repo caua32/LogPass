@@ -281,7 +281,7 @@ class _ReportsPageState extends State<ReportsPage>
                 color: Color(0xFF44CABD), fontSize: 12, fontWeight: FontWeight.w500,
               ), overflow: TextOverflow.ellipsis),
               Text(r.nomeConsumidor ?? '', style: TextStyle(
-                color: const Color(0xFF44CABD).withValues(alpha: 0.5), fontSize: 10,
+                color: const Color(0xFF44CABD).withValues(alpha: 0.55), fontSize: 11,
               )),
             ])),
             Container(
@@ -291,7 +291,7 @@ class _ReportsPageState extends State<ReportsPage>
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(r.statusNome, style: TextStyle(
-                color: r.statusColor, fontSize: 9, fontWeight: FontWeight.bold,
+                color: r.statusColor, fontSize: 10, fontWeight: FontWeight.bold,
               )),
             ),
           ]),

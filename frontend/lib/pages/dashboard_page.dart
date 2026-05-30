@@ -135,11 +135,14 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 ),
                 Row(
                   children: [
-                    Text(
-                      'Olá, $nome',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _cyan.withValues(alpha: 0.65),
+                    Flexible(
+                      child: Text(
+                        'Olá, $nome',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: _cyan.withValues(alpha: 0.65),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -153,10 +156,10 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                       child: Text(
                         isEmpresa ? 'Empresa' : 'Consumidor',
                         style: const TextStyle(
-                          fontSize: 9,
+                          fontSize: 10,
                           color: _cyan,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),

@@ -443,12 +443,12 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TIPO DE USUÁRIO',
+            'Tipo de Usuário',
             style: TextStyle(
-              color: _cyan.withValues(alpha: 0.55),
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+              color: _cyan.withValues(alpha: 0.60),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
           const SizedBox(height: 10),

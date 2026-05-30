@@ -196,10 +196,10 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         )],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             width: 4,
-            height: 130,
             decoration: BoxDecoration(
               color: r.statusColor,
               borderRadius: const BorderRadius.only(

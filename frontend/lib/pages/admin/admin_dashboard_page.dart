@@ -273,6 +273,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 if (_nomeAdmin != null)
                   Text(
                     _nomeAdmin!,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontSize: 11,
                         color: _cyan.withValues(alpha: 0.60)),
@@ -502,10 +503,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 ),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     width: 6,
-                    height: 40,
                     decoration: BoxDecoration(
                       color: r.statusColor,
                       borderRadius: BorderRadius.circular(3),

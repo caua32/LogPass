@@ -203,10 +203,10 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
         )],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             width: 4,
-            height: 120,
             decoration: BoxDecoration(
               color: r.statusColor,
               borderRadius: const BorderRadius.only(

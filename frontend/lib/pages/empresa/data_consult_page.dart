@@ -235,6 +235,8 @@ class _DataConsultPageState extends State<DataConsultPage> {
   }
 
   Widget _buildRow(Reclamacao r) {
+    final screenW = MediaQuery.of(context).size.width;
+    final showName = screenW > 360;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -244,28 +246,30 @@ class _DataConsultPageState extends State<DataConsultPage> {
       ),
       child: Row(children: [
         SizedBox(
-          width: 36,
+          width: 32,
           child: Text('#${r.id}', style: TextStyle(
             color: const Color(0xFF44CABD).withValues(alpha: 0.5),
             fontSize: 11, fontWeight: FontWeight.bold,
           )),
         ),
         Expanded(
-          flex: 3,
+          flex: showName ? 3 : 5,
           child: Text(r.titulo, style: const TextStyle(
             color: Color(0xFF44CABD), fontSize: 13, fontWeight: FontWeight.w500,
           ), overflow: TextOverflow.ellipsis),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          flex: 2,
-          child: Text(r.nomeConsumidor ?? '-', style: TextStyle(
-            color: const Color(0xFF44CABD).withValues(alpha: 0.65), fontSize: 12,
-          ), overflow: TextOverflow.ellipsis),
-        ),
-        const SizedBox(width: 8),
+        if (showName) ...[
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 2,
+            child: Text(r.nomeConsumidor ?? '-', style: TextStyle(
+              color: const Color(0xFF44CABD).withValues(alpha: 0.65), fontSize: 12,
+            ), overflow: TextOverflow.ellipsis),
+          ),
+        ],
+        const SizedBox(width: 6),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
           decoration: BoxDecoration(
             color: r.statusColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(6),
@@ -276,17 +280,21 @@ class _DataConsultPageState extends State<DataConsultPage> {
           )),
         ),
         const SizedBox(width: 6),
-        GestureDetector(
-          onTap: () => context.go('/chat/${r.id}', extra: {'titulo': r.titulo}),
-          child: Container(
-            width: 30, height: 30,
-            decoration: BoxDecoration(
-              color: const Color(0xFF44CABD).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
+        Semantics(
+          button: true,
+          label: 'Abrir chat da reclamação ${r.titulo}',
+          child: GestureDetector(
+            onTap: () => context.go('/chat/${r.id}', extra: {'titulo': r.titulo}),
+            child: Container(
+              width: 32, height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF44CABD).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
+              ),
+              child: const Icon(Icons.chat_bubble_outline,
+                  color: Color(0xFF44CABD), size: 15),
             ),
-            child: const Icon(Icons.chat_bubble_outline,
-                color: Color(0xFF44CABD), size: 15),
           ),
         ),
       ]),
