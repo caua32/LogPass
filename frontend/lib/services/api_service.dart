@@ -10,7 +10,7 @@ class ApiException implements Exception {
 }
 
 class ApiService {
-  static const _timeout = Duration(seconds: 10);
+  static const _timeout = Duration(seconds: 60);
 
   static Map<String, String> _headers({String? token}) => {
         'Content-Type': 'application/json',
