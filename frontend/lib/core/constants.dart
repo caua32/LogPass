@@ -1,4 +1,4 @@
-const String kBaseUrl = 'http://192.168.0.141:3000/api';
+const String kBaseUrl = 'https://logpass.onrender.com/api';
 
 const Map<int, String> kStatusNomes = {
   1: 'Pendente',
