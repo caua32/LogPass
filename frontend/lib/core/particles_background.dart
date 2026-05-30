@@ -3,22 +3,59 @@ import 'package:flutter/material.dart';
 
 class _Particle {
   double x, y, radius, speedX, speedY, opacity;
+  bool isGlow;
   _Particle({
-    required this.x, required this.y, required this.radius,
-    required this.speedX, required this.speedY, required this.opacity,
+    required this.x,
+    required this.y,
+    required this.radius,
+    required this.speedX,
+    required this.speedY,
+    required this.opacity,
+    required this.isGlow,
   });
 }
 
 class _ParticlePainter extends CustomPainter {
   final List<_Particle> particles;
-  _ParticlePainter(this.particles);
+  final bool showLines;
+  static const _cyan = Color(0xFF4CE0D2);
+
+  _ParticlePainter(this.particles, {this.showLines = true});
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Draw connection lines between nearby particles
+    if (showLines) {
+      for (int i = 0; i < particles.length; i++) {
+        for (int j = i + 1; j < particles.length; j++) {
+          final a = particles[i];
+          final b = particles[j];
+          final dx = a.x - b.x;
+          final dy = a.y - b.y;
+          final dist = sqrt(dx * dx + dy * dy);
+          if (dist < 0.18) {
+            final lineOpacity = (1 - dist / 0.18) * 0.12;
+            final linePaint = Paint()
+              ..color = _cyan.withValues(alpha: lineOpacity)
+              ..strokeWidth = 0.5;
+            canvas.drawLine(
+              Offset(a.x * size.width, a.y * size.height),
+              Offset(b.x * size.width, b.y * size.height),
+              linePaint,
+            );
+          }
+        }
+      }
+    }
+
+    // Draw particles
     for (final p in particles) {
       final paint = Paint()
-        ..color = const Color(0xFF4CE0D2).withValues(alpha: p.opacity)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, p.radius * 1.5);
+        ..color = _cyan.withValues(alpha: p.opacity)
+        ..maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          p.isGlow ? p.radius * 2.5 : p.radius * 0.8,
+        );
       canvas.drawCircle(
         Offset(p.x * size.width, p.y * size.height),
         p.radius,
@@ -33,7 +70,9 @@ class _ParticlePainter extends CustomPainter {
 
 class ParticlesBackground extends StatefulWidget {
   final int count;
-  const ParticlesBackground({super.key, this.count = 30});
+  final bool showLines;
+
+  const ParticlesBackground({super.key, this.count = 45, this.showLines = true});
 
   @override
   State<ParticlesBackground> createState() => _ParticlesBackgroundState();
@@ -48,15 +87,26 @@ class _ParticlesBackgroundState extends State<ParticlesBackground>
   @override
   void initState() {
     super.initState();
-    _particles = List.generate(widget.count, (_) => _Particle(
-      x: _random.nextDouble(),
-      y: _random.nextDouble(),
-      radius: _random.nextDouble() * 10 + 3,
-      speedX: (_random.nextDouble() - 0.5) * 0.00025,
-      speedY: (_random.nextDouble() - 0.5) * 0.00025,
-      opacity: _random.nextDouble() * 0.10 + 0.03,
-    ));
-    _ctrl = AnimationController(duration: const Duration(seconds: 1), vsync: this)
+    _particles = List.generate(widget.count, (i) {
+      final isGlow = i < widget.count ~/ 3;
+      return _Particle(
+        x: _random.nextDouble(),
+        y: _random.nextDouble(),
+        radius: isGlow
+            ? _random.nextDouble() * 12 + 8
+            : _random.nextDouble() * 2 + 1.5,
+        speedX: (_random.nextDouble() - 0.5) * 0.0010,
+        speedY: (_random.nextDouble() - 0.5) * 0.0010,
+        opacity: isGlow
+            ? _random.nextDouble() * 0.06 + 0.04
+            : _random.nextDouble() * 0.35 + 0.20,
+        isGlow: isGlow,
+      );
+    });
+    _ctrl = AnimationController(
+      duration: const Duration(milliseconds: 16),
+      vsync: this,
+    )
       ..addListener(_update)
       ..repeat();
   }
@@ -83,7 +133,7 @@ class _ParticlesBackgroundState extends State<ParticlesBackground>
     return AnimatedBuilder(
       animation: _ctrl,
       builder: (_, __) => CustomPaint(
-        painter: _ParticlePainter(_particles),
+        painter: _ParticlePainter(_particles, showLines: widget.showLines),
         size: Size.infinite,
       ),
     );

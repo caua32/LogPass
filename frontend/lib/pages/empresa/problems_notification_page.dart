@@ -21,12 +21,15 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
 
   late AnimationController _fadeCtrl;
   late Animation<double> _fadeAnim;
+  late Animation<Offset> _slideAnim;
 
   @override
   void initState() {
     super.initState();
-    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
+    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutCubic));
     _fadeCtrl.forward();
     _load();
   }
@@ -58,7 +61,9 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A1929),
-      body: FadeTransition(
+      body: SlideTransition(
+        position: _slideAnim,
+        child: FadeTransition(
         opacity: _fadeAnim,
         child: Column(children: [
           AppHeader(
@@ -84,6 +89,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                         : _buildList(),
           ),
         ]),
+        ),
       ),
     );
   }
@@ -157,20 +163,32 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
           child: ListView.builder(
             padding: const EdgeInsets.all(18),
             itemCount: _urgentes.length,
-            itemBuilder: (_, i) => _buildCard(_urgentes[i]),
+            itemBuilder: (_, i) => _buildCard(_urgentes[i], i),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildCard(Reclamacao r) {
-    return Container(
+  Widget _buildCard(Reclamacao r, int index) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 350 + (index * 60).clamp(0, 300)),
+      tween: Tween(begin: 0, end: 1),
+      curve: Curves.easeOutCubic,
+      builder: (_, value, child) => Transform.translate(
+        offset: Offset(0, 24 * (1 - value)),
+        child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
+      ),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: r.statusColor.withValues(alpha: 0.35)),
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: r.statusColor.withValues(alpha: 0.25)),
+        boxShadow: [BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 10, offset: const Offset(0, 4),
+        )],
       ),
       child: Row(
         children: [
@@ -255,6 +273,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -25,12 +25,15 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
 
   late AnimationController _fadeCtrl;
   late Animation<double> _fadeAnim;
+  late Animation<Offset> _slideAnim;
 
   @override
   void initState() {
     super.initState();
-    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
+    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutCubic));
     _fadeCtrl.forward();
     _load();
   }
@@ -112,7 +115,9 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A1929),
-      body: FadeTransition(
+      body: SlideTransition(
+        position: _slideAnim,
+        child: FadeTransition(
         opacity: _fadeAnim,
         child: Column(children: [
           const AppHeader(
@@ -222,6 +227,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
                       ),
           ),
         ]),
+        ),
       ),
     );
   }

@@ -21,54 +21,67 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _loading = false;
   bool _senhaVisivel = false;
 
-  late AnimationController _fadeCtrl;
-  late AnimationController _typingCtrl;
-  late Animation<double> _fadeAnim;
-  late Animation<double> _typingAnim;
+  static const _cyan = Color(0xFF4CE0D2);
+  static const _bg = Color(0xFF0A1929);
+  static const _card = Color(0xFF0D2137);
+
+  late AnimationController _logoCtrl;
+  late AnimationController _cardCtrl;
+  late Animation<double> _logoScale;
+  late Animation<double> _logoFade;
+  late Animation<double> _cardFade;
+  late Animation<Offset> _cardSlide;
 
   @override
   void initState() {
     super.initState();
 
-    _fadeCtrl = AnimationController(duration: const Duration(seconds: 3), vsync: this)
-      ..repeat(reverse: true);
-    _fadeAnim = Tween<double>(begin: 0.6, end: 1.0).animate(
-        CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeInOut));
+    _logoCtrl = AnimationController(
+        duration: const Duration(milliseconds: 900), vsync: this);
+    _logoScale = CurvedAnimation(parent: _logoCtrl, curve: Curves.elasticOut);
+    _logoFade = CurvedAnimation(parent: _logoCtrl, curve: const Interval(0, 0.4, curve: Curves.easeOut));
 
-    _typingCtrl = AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    _typingAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _typingCtrl, curve: Curves.easeInOut));
-    _typingCtrl.forward();
+    _cardCtrl = AnimationController(
+        duration: const Duration(milliseconds: 700), vsync: this);
+    _cardFade = CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOut);
+    _cardSlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOutCubic));
+
+    _logoCtrl.forward();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _cardCtrl.forward();
+    });
   }
 
   @override
   void dispose() {
-    _fadeCtrl.dispose();
-    _typingCtrl.dispose();
+    _logoCtrl.dispose();
+    _cardCtrl.dispose();
     _emailCtrl.dispose();
     _senhaCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _login() async {
-    setState(() { _erro = ''; });
+    setState(() => _erro = '');
     if (_emailCtrl.text.trim().isEmpty || _senhaCtrl.text.isEmpty) {
-      setState(() { _erro = 'Preencha todos os campos.'; });
+      setState(() => _erro = 'Preencha todos os campos.');
       return;
     }
     if (_tipo == null) {
-      setState(() { _erro = 'Selecione o tipo de usuário.'; });
+      setState(() => _erro = 'Selecione o tipo de usuário.');
       return;
     }
     setState(() => _loading = true);
     try {
-      final ok = await context.read<AuthProvider>().login(
-          _emailCtrl.text.trim(), _senhaCtrl.text, _tipo!);
-      if (!ok && mounted) setState(() { _erro = 'Email ou senha incorretos.'; });
+      final ok = await context
+          .read<AuthProvider>()
+          .login(_emailCtrl.text.trim(), _senhaCtrl.text, _tipo!);
+      if (!ok && mounted) setState(() => _erro = 'Email ou senha incorretos.');
     } on ApiException catch (e) {
-      if (mounted) setState(() { _erro = e.message; });
+      if (mounted) setState(() => _erro = e.message);
     } catch (_) {
-      if (mounted) setState(() { _erro = 'Não foi possível conectar ao servidor.'; });
+      if (mounted) setState(() => _erro = 'Não foi possível conectar ao servidor.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -77,262 +90,220 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A1929),
-      floatingActionButton: FloatingActionButton(
+      backgroundColor: _bg,
+      floatingActionButton: FloatingActionButton.small(
         onPressed: () => context.push('/admin/login'),
-        backgroundColor: const Color(0xFF102A43),
-        foregroundColor: const Color(0xFF4CE0D2),
-        mini: true,
+        backgroundColor: _card,
+        foregroundColor: _cyan,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: _cyan.withValues(alpha: 0.25)),
+        ),
         child: const Icon(Icons.admin_panel_settings, size: 16),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       body: Stack(
         children: [
-          const ParticlesBackground(),
-          // Radial vignette
+          const ParticlesBackground(count: 50, showLines: true),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.center,
-                radius: 1.3,
-                colors: [Color(0x000A1929), Color(0xCC0A1929)],
+                radius: 1.4,
+                colors: [
+                  _bg.withValues(alpha: 0),
+                  _bg.withValues(alpha: 0.75),
+                ],
               ),
             ),
           ),
-          // Content
-          SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Logo
-                    SizedBox(
-                      height: 110,
-                      child: AnimatedBuilder(
-                        animation: _fadeAnim,
-                        builder: (_, __) => Transform.translate(
-                          offset: Offset(0, (_fadeAnim.value - 0.6) * 8),
-                          child: Opacity(
-                            opacity: _fadeAnim.value,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [BoxShadow(
-                                          color: const Color(0xFF4CE0D2).withValues(alpha: 0.4),
-                                          blurRadius: 20,
-                                          spreadRadius: 2,
-                                        )],
-                                      ),
-                                      child: const Icon(Icons.computer, size: 34, color: Color(0xFF4CE0D2)),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    AnimatedBuilder(
-                                      animation: _typingAnim,
-                                      builder: (_, __) {
-                                        const text = 'LogPass';
-                                        final visible = text.substring(0, (_typingAnim.value * text.length).round());
-                                        return Row(children: [
-                                          Text(visible, style: const TextStyle(
-                                            fontSize: 34, fontWeight: FontWeight.bold,
-                                            color: Color(0xFF4CE0D2), fontFamily: 'monospace',
-                                            letterSpacing: 2,
-                                            shadows: [Shadow(color: Color(0xFF4CE0D2), blurRadius: 14)],
-                                          )),
-                                          if (_typingAnim.value < 1.0)
-                                            Container(width: 2, height: 34, color: const Color(0xFF4CE0D2)),
-                                        ]);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Gerenciamento de Reclamações',
-                                  style: TextStyle(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.5),
-                                    fontSize: 11,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    // Card with glassmorphism
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: Container(
-                          width: double.infinity,
-                          constraints: const BoxConstraints(maxWidth: 360),
-                          padding: const EdgeInsets.all(28),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF102A43).withValues(alpha: 0.82),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: const Color(0xFF4CE0D2).withValues(alpha: 0.45),
-                            ),
-                            boxShadow: [BoxShadow(
-                              color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
-                              blurRadius: 32,
-                              spreadRadius: 2,
-                            )],
-                          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 24),
+                      // Logo animado
+                      ScaleTransition(
+                        scale: _logoScale,
+                        child: FadeTransition(
+                          opacity: _logoFade,
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text('Entrar', style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold,
-                                color: Color(0xFF4CE0D2), letterSpacing: 1,
-                              )),
-                              const SizedBox(height: 8),
                               Container(
-                                width: 36, height: 2,
+                                width: 72,
+                                height: 72,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF4CE0D2),
-                                  borderRadius: BorderRadius.circular(1),
-                                  boxShadow: [BoxShadow(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
-                                    blurRadius: 6,
-                                  )],
-                                ),
-                              ),
-                              const SizedBox(height: 22),
-                              _buildField('Email', _emailCtrl,
-                                  icon: Icons.email_outlined,
-                                  keyboardType: TextInputType.emailAddress),
-                              const SizedBox(height: 14),
-                              _buildField('Senha', _senhaCtrl,
-                                  icon: Icons.lock_outline,
-                                  obscure: !_senhaVisivel,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _senhaVisivel
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
-                                      size: 20,
-                                    ),
-                                    onPressed: () => setState(() => _senhaVisivel = !_senhaVisivel),
-                                  )),
-                              const SizedBox(height: 16),
-                              // Tipo de usuário
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0A1929).withValues(alpha: 0.6),
-                                  borderRadius: BorderRadius.circular(8),
+                                  color: _cyan.withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.35),
+                                    color: _cyan.withValues(alpha: 0.35),
+                                    width: 1.5,
                                   ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Tipo de Usuário', style: TextStyle(
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.7),
-                                      fontSize: 11,
-                                      letterSpacing: 0.8,
-                                    )),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Expanded(child: _buildRadio('empresa', 'Empresa')),
-                                        Expanded(child: _buildRadio('consumidor', 'Consumidor')),
-                                      ],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: _cyan.withValues(alpha: 0.25),
+                                      blurRadius: 30,
+                                      spreadRadius: 4,
                                     ),
                                   ],
                                 ),
+                                child: const Icon(Icons.computer,
+                                    size: 34, color: _cyan),
                               ),
-                              const SizedBox(height: 22),
-                              if (_loading)
-                                const SizedBox(
-                                  height: 44,
-                                  child: Center(child: CircularProgressIndicator(
-                                    color: Color(0xFF4CE0D2), strokeWidth: 2,
-                                  )),
-                                )
-                              else
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 44,
-                                  child: ElevatedButton(
-                                    onPressed: _login,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF4CE0D2),
-                                      foregroundColor: const Color(0xFF0A1929),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8)),
-                                      elevation: 0,
-                                    ),
-                                    child: const Text('Entrar', style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1,
-                                    )),
-                                  ),
-                                ),
                               const SizedBox(height: 16),
-                              Wrap(
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  Text('Não possui conta? ', style: TextStyle(
-                                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
-                                    fontSize: 13,
-                                  )),
-                                  GestureDetector(
-                                    onTap: () => context.push('/register'),
-                                    child: const Text('Cadastre-se', style: TextStyle(
-                                      color: Color(0xFF4CE0D2),
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                  ),
-                                ],
-                              ),
-                              if (_erro.isNotEmpty) ...[
-                                const SizedBox(height: 14),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(
-                                      color: const Color(0xFFFF6B6B).withValues(alpha: 0.4),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.error_outline,
-                                          color: Color(0xFFFF6B6B), size: 16),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(_erro, style: const TextStyle(
-                                          color: Color(0xFFFF6B6B), fontSize: 12,
-                                        )),
-                                      ),
-                                    ],
-                                  ),
+                              const Text(
+                                'LogPass',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                  color: _cyan,
+                                  letterSpacing: 3,
+                                  shadows: [
+                                    Shadow(color: _cyan, blurRadius: 20),
+                                  ],
                                 ),
-                              ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'GERENCIAMENTO DE RECLAMAÇÕES',
+                                style: TextStyle(
+                                  color: _cyan.withValues(alpha: 0.40),
+                                  fontSize: 9,
+                                  letterSpacing: 2.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 36),
+                      // Card animado
+                      SlideTransition(
+                        position: _cardSlide,
+                        child: FadeTransition(
+                          opacity: _cardFade,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(18),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                              child: Container(
+                                width: double.infinity,
+                                constraints: const BoxConstraints(maxWidth: 380),
+                                padding: const EdgeInsets.all(28),
+                                decoration: BoxDecoration(
+                                  color: _card.withValues(alpha: 0.88),
+                                  borderRadius: BorderRadius.circular(18),
+                                  border: Border.all(
+                                    color: _cyan.withValues(alpha: 0.18),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.4),
+                                      blurRadius: 40,
+                                      offset: const Offset(0, 16),
+                                    ),
+                                    BoxShadow(
+                                      color: _cyan.withValues(alpha: 0.06),
+                                      blurRadius: 40,
+                                      spreadRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Bem-vindo de volta',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFFE8F8F7),
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Entre com suas credenciais para continuar',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: _cyan.withValues(alpha: 0.50),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 28),
+                                    _buildField('Email', _emailCtrl,
+                                        icon: Icons.email_outlined,
+                                        keyboardType: TextInputType.emailAddress),
+                                    const SizedBox(height: 16),
+                                    _buildField('Senha', _senhaCtrl,
+                                        icon: Icons.lock_outline,
+                                        obscure: !_senhaVisivel,
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _senhaVisivel
+                                                ? Icons.visibility_off_outlined
+                                                : Icons.visibility_outlined,
+                                            color: _cyan.withValues(alpha: 0.6),
+                                            size: 18,
+                                          ),
+                                          onPressed: () => setState(
+                                              () => _senhaVisivel = !_senhaVisivel),
+                                        )),
+                                    const SizedBox(height: 16),
+                                    _buildTipoSelector(),
+                                    const SizedBox(height: 24),
+                                    _buildBotao(),
+                                    const SizedBox(height: 20),
+                                    Center(
+                                      child: Wrap(
+                                        alignment: WrapAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Não possui conta? ',
+                                            style: TextStyle(
+                                              color: _cyan.withValues(alpha: 0.5),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () => context.push('/register'),
+                                            child: const Text(
+                                              'Cadastre-se',
+                                              style: TextStyle(
+                                                color: _cyan,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                decoration: TextDecoration.underline,
+                                                decorationColor: _cyan,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (_erro.isNotEmpty) ...[
+                                      const SizedBox(height: 16),
+                                      _buildErro(),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -342,42 +313,52 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildField(String label, TextEditingController ctrl,
-      {bool obscure = false, TextInputType? keyboardType, IconData? icon, Widget? suffixIcon}) {
+  Widget _buildField(
+    String label,
+    TextEditingController ctrl, {
+    bool obscure = false,
+    TextInputType? keyboardType,
+    IconData? icon,
+    Widget? suffixIcon,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(
-          color: const Color(0xFF4CE0D2).withValues(alpha: 0.8),
-          fontSize: 12,
-          letterSpacing: 0.5,
-        )),
-        const SizedBox(height: 6),
+        Text(
+          label,
+          style: TextStyle(
+            color: _cyan.withValues(alpha: 0.75),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 8),
         TextField(
           controller: ctrl,
           obscureText: obscure,
           keyboardType: keyboardType,
-          style: const TextStyle(color: Color(0xFF4CE0D2), fontSize: 14),
+          style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF0A1929).withValues(alpha: 0.7),
+            fillColor: const Color(0xFF071520),
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             prefixIcon: icon != null
-                ? Icon(icon, color: const Color(0xFF4CE0D2).withValues(alpha: 0.6), size: 18)
+                ? Icon(icon, color: _cyan.withValues(alpha: 0.5), size: 18)
                 : null,
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: _cyan.withValues(alpha: 0.18)),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: _cyan.withValues(alpha: 0.18)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF4CE0D2), width: 1.5),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: _cyan, width: 1.5),
             ),
           ),
         ),
@@ -385,26 +366,129 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildRadio(String value, String label) {
+  Widget _buildTipoSelector() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF071520),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: _cyan.withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'TIPO DE USUÁRIO',
+            style: TextStyle(
+              color: _cyan.withValues(alpha: 0.55),
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(child: _buildTipoOption('empresa', Icons.business_outlined, 'Empresa')),
+              const SizedBox(width: 10),
+              Expanded(child: _buildTipoOption('consumidor', Icons.person_outline, 'Consumidor')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipoOption(String value, IconData icon, String label) {
     final selected = _tipo == value;
     return GestureDetector(
       onTap: () => setState(() => _tipo = value),
-      child: Row(children: [
-        Radio<String>(
-          value: value, groupValue: _tipo,
-          onChanged: (v) => setState(() => _tipo = v),
-          activeColor: const Color(0xFF4CE0D2),
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: VisualDensity.compact,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: selected ? _cyan.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: selected ? _cyan.withValues(alpha: 0.5) : _cyan.withValues(alpha: 0.15),
+          ),
         ),
-        Text(label, style: TextStyle(
-          color: selected
-              ? const Color(0xFF4CE0D2)
-              : const Color(0xFF4CE0D2).withValues(alpha: 0.5),
-          fontSize: 13,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-        )),
-      ]),
+        child: Column(
+          children: [
+            Icon(icon,
+                color: selected ? _cyan : _cyan.withValues(alpha: 0.4),
+                size: 20),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected ? _cyan : _cyan.withValues(alpha: 0.4),
+                fontSize: 12,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBotao() {
+    if (_loading) {
+      return SizedBox(
+        height: 48,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: _cyan, strokeWidth: 2,
+            backgroundColor: _cyan.withValues(alpha: 0.15),
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _cyan,
+          foregroundColor: _bg,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 0,
+          shadowColor: _cyan.withValues(alpha: 0.4),
+        ),
+        child: const Text(
+          'Entrar',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 15,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErro() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFF6B6B).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFFF6B6B).withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, color: Color(0xFFFF6B6B), size: 16),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              _erro,
+              style: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

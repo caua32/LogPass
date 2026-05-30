@@ -91,13 +91,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
       backgroundColor: const Color(0xFF0A1929),
       body: Stack(
         children: [
-          const ParticlesBackground(count: 20),
+          const ParticlesBackground(count: 50, showLines: true),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.center,
-                radius: 1.3,
-                colors: [Color(0x000A1929), Color(0xCC0A1929)],
+                radius: 1.4,
+                colors: [
+                  const Color(0xFF0A1929).withValues(alpha: 0),
+                  const Color(0xFF0A1929).withValues(alpha: 0.75),
+                ],
               ),
             ),
           ),
@@ -190,15 +193,23 @@ class _AdminLoginPageState extends State<AdminLoginPage> with TickerProviderStat
                                 child: Container(
                                   padding: const EdgeInsets.all(26),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF102A43).withValues(alpha: 0.85),
-                                    borderRadius: BorderRadius.circular(14),
+                                    color: const Color(0xFF0D2137).withValues(alpha: 0.88),
+                                    borderRadius: BorderRadius.circular(18),
                                     border: Border.all(
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.4),
+                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.18),
                                     ),
-                                    boxShadow: [BoxShadow(
-                                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.1),
-                                      blurRadius: 30,
-                                    )],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.4),
+                                        blurRadius: 40,
+                                        offset: const Offset(0, 16),
+                                      ),
+                                      BoxShadow(
+                                        color: const Color(0xFF4CE0D2).withValues(alpha: 0.06),
+                                        blurRadius: 40,
+                                        spreadRadius: 4,
+                                      ),
+                                    ],
                                   ),
                                   child: Column(children: [
                                     const Text('Acesso Restrito', style: TextStyle(

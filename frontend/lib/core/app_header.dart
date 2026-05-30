@@ -20,17 +20,26 @@ class AppHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 44, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        border: Border(
-          bottom: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0D2137), Color(0xFF102A43)],
         ),
-        boxShadow: [BoxShadow(
-          color: const Color(0xFF000000).withValues(alpha: 0.3),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        )],
+        border: Border(
+          bottom: BorderSide(
+            color: const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+            width: 1.5,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF000000).withValues(alpha: 0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -38,35 +47,61 @@ class AppHeader extends StatelessWidget {
             GestureDetector(
               onTap: () => context.pop(),
               child: Container(
-                width: 36, height: 36,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF4CE0D2).withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.3),
+                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.30),
                   ),
                 ),
-                child: const Icon(Icons.arrow_back_ios_new,
-                    color: Color(0xFF4CE0D2), size: 16),
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Color(0xFF4CE0D2),
+                  size: 15,
+                ),
               ),
             ),
             const SizedBox(width: 14),
           ],
-          Icon(icon, size: 26, color: const Color(0xFF4CE0D2)),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFF4CE0D2).withValues(alpha: 0.25),
+              ),
+            ),
+            child: Icon(icon, size: 18, color: const Color(0xFF4CE0D2)),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold,
-                  color: Color(0xFF4CE0D2), letterSpacing: 0.3,
-                )),
-                if (subtitle != null)
-                  Text(subtitle!, style: TextStyle(
-                    fontSize: 12,
-                    color: const Color(0xFF4CE0D2).withValues(alpha: 0.6),
-                  )),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFE8F8F7),
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: const Color(0xFF4CE0D2).withValues(alpha: 0.55),
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -77,47 +112,55 @@ class AppHeader extends StatelessWidget {
   }
 }
 
-// Decoração padrão para inputs nas páginas internas
 InputDecoration appInputDeco(String hint, {IconData? prefixIcon}) {
   return InputDecoration(
     hintText: hint,
-    hintStyle: TextStyle(color: const Color(0xFF4CE0D2).withValues(alpha: 0.4), fontSize: 13),
+    hintStyle: TextStyle(
+      color: const Color(0xFF4CE0D2).withValues(alpha: 0.35),
+      fontSize: 14,
+    ),
     filled: true,
-    fillColor: const Color(0xFF0A1929).withValues(alpha: 0.8),
+    fillColor: const Color(0xFF071520),
     isDense: true,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     prefixIcon: prefixIcon != null
-        ? Icon(prefixIcon, color: const Color(0xFF4CE0D2).withValues(alpha: 0.6), size: 18)
+        ? Icon(prefixIcon,
+            color: const Color(0xFF4CE0D2).withValues(alpha: 0.5), size: 18)
         : null,
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+          color: const Color(0xFF4CE0D2).withValues(alpha: 0.20)),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.35)),
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+          color: const Color(0xFF4CE0D2).withValues(alpha: 0.20)),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Color(0xFF4CE0D2), width: 1.5),
+      borderRadius: BorderRadius.circular(10),
+      borderSide:
+          const BorderSide(color: Color(0xFF4CE0D2), width: 1.5),
     ),
     disabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: const Color(0xFF4CE0D2).withValues(alpha: 0.15)),
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+          color: const Color(0xFF4CE0D2).withValues(alpha: 0.10)),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: const Color(0xFFFF6B6B).withValues(alpha: 0.6)),
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+          color: const Color(0xFFFF6B6B).withValues(alpha: 0.7)),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       borderSide: const BorderSide(color: Color(0xFFFF6B6B), width: 1.5),
     ),
-    errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
+    errorStyle:
+        const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
   );
 }
 
-// Card de seção padrão
 class SectionCard extends StatelessWidget {
   final String title;
   final IconData? titleIcon;
@@ -134,16 +177,20 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF102A43),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF4CE0D2).withValues(alpha: 0.2)),
-        boxShadow: [BoxShadow(
-          color: const Color(0xFF000000).withValues(alpha: 0.2),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        )],
+        color: const Color(0xFF0D2137),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color(0xFF4CE0D2).withValues(alpha: 0.12),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF000000).withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,19 +198,32 @@ class SectionCard extends StatelessWidget {
           Row(
             children: [
               if (titleIcon != null) ...[
-                Icon(titleIcon, color: const Color(0xFF4CE0D2), size: 18),
+                Icon(titleIcon,
+                    color: const Color(0xFF4CE0D2), size: 16),
                 const SizedBox(width: 8),
               ],
-              Text(title, style: const TextStyle(
-                fontSize: 15, fontWeight: FontWeight.bold,
-                color: Color(0xFF4CE0D2), letterSpacing: 0.3,
-              )),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF4CE0D2),
+                  letterSpacing: 0.2,
+                ),
+              ),
             ],
           ),
           Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 16),
+            margin: const EdgeInsets.only(top: 10, bottom: 16),
             height: 1,
-            color: const Color(0xFF4CE0D2).withValues(alpha: 0.15),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF4CE0D2).withValues(alpha: 0.30),
+                  const Color(0xFF4CE0D2).withValues(alpha: 0.0),
+                ],
+              ),
+            ),
           ),
           ...children,
         ],
