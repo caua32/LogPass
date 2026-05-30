@@ -24,12 +24,12 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   void initState() {
     super.initState();
     _headerCtrl = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
+        duration: const Duration(milliseconds: 380), vsync: this);
     _logoCtrl = AnimationController(
-        duration: const Duration(milliseconds: 800), vsync: this);
-    _headerFade = CurvedAnimation(parent: _headerCtrl, curve: Curves.easeOut);
+        duration: const Duration(milliseconds: 700), vsync: this);
+    _headerFade = CurvedAnimation(parent: _headerCtrl, curve: Curves.easeOutQuart);
     _logoScale =
-        CurvedAnimation(parent: _logoCtrl, curve: Curves.elasticOut);
+        CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOutBack);
     _headerCtrl.forward();
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) _logoCtrl.forward();
@@ -245,11 +245,11 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
   Widget _buildMenuCard(_MenuItem item, int index) {
     return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 400 + index * 80),
-      tween: Tween(begin: 0, end: 1),
-      curve: Curves.easeOutCubic,
+      duration: Duration(milliseconds: 350 + index * 60),
+      tween: Tween(begin: 0.0, end: 1.0),
+      curve: Curves.easeOutQuart,
       builder: (_, value, __) => Transform.scale(
-        scale: 0.65 + 0.35 * value,
+        scale: 0.88 + 0.12 * value,
         child: Opacity(
           opacity: value.clamp(0.0, 1.0),
           child: Semantics(

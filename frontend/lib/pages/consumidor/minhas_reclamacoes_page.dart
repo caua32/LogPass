@@ -26,10 +26,10 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
   @override
   void initState() {
     super.initState();
-    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 420), vsync: this);
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutCubic));
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutQuart));
     _fadeCtrl.forward();
     _load();
   }
@@ -186,7 +186,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 350 + (index * 60).clamp(0, 300)),
       tween: Tween(begin: 0, end: 1),
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeOutQuart,
       builder: (_, value, child) => Transform.translate(
         offset: Offset(0, 24 * (1 - value)),
         child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class _Particle {
   double x, y, radius, speedX, speedY, opacity;
@@ -24,8 +25,8 @@ class _ParticlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Draw connection lines between nearby particles
     if (showLines) {
+      final linePaint = Paint()..strokeWidth = 0.6;
       for (int i = 0; i < particles.length; i++) {
         for (int j = i + 1; j < particles.length; j++) {
           final a = particles[i];
@@ -34,10 +35,8 @@ class _ParticlePainter extends CustomPainter {
           final dy = a.y - b.y;
           final dist = sqrt(dx * dx + dy * dy);
           if (dist < 0.18) {
-            final lineOpacity = (1 - dist / 0.18) * 0.12;
-            final linePaint = Paint()
-              ..color = _cyan.withValues(alpha: lineOpacity)
-              ..strokeWidth = 0.5;
+            linePaint.color =
+                _cyan.withValues(alpha: (1 - dist / 0.18) * 0.13);
             canvas.drawLine(
               Offset(a.x * size.width, a.y * size.height),
               Offset(b.x * size.width, b.y * size.height),
@@ -48,18 +47,16 @@ class _ParticlePainter extends CustomPainter {
       }
     }
 
-    // Draw particles
     for (final p in particles) {
-      final paint = Paint()
-        ..color = _cyan.withValues(alpha: p.opacity)
-        ..maskFilter = MaskFilter.blur(
-          BlurStyle.normal,
-          p.isGlow ? p.radius * 2.5 : p.radius * 0.8,
-        );
       canvas.drawCircle(
         Offset(p.x * size.width, p.y * size.height),
         p.radius,
-        paint,
+        Paint()
+          ..color = _cyan.withValues(alpha: p.opacity)
+          ..maskFilter = MaskFilter.blur(
+            BlurStyle.normal,
+            p.isGlow ? p.radius * 2.2 : p.radius * 0.7,
+          ),
       );
     }
   }
@@ -80,8 +77,9 @@ class ParticlesBackground extends StatefulWidget {
 
 class _ParticlesBackgroundState extends State<ParticlesBackground>
     with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
+  late Ticker _ticker;
   late List<_Particle> _particles;
+  Duration _lastElapsed = Duration.zero;
   final _random = Random();
 
   @override
@@ -95,44 +93,51 @@ class _ParticlesBackgroundState extends State<ParticlesBackground>
         radius: isGlow
             ? _random.nextDouble() * 12 + 8
             : _random.nextDouble() * 2 + 1.5,
-        speedX: (_random.nextDouble() - 0.5) * 0.0010,
-        speedY: (_random.nextDouble() - 0.5) * 0.0010,
+        // speed normalizado para 60fps
+        speedX: (_random.nextDouble() - 0.5) * 0.00065,
+        speedY: (_random.nextDouble() - 0.5) * 0.00065,
         opacity: isGlow
             ? _random.nextDouble() * 0.06 + 0.04
             : _random.nextDouble() * 0.35 + 0.20,
         isGlow: isGlow,
       );
     });
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 16),
-      vsync: this,
-    )
-      ..addListener(_update)
-      ..repeat();
+
+    _ticker = createTicker(_onTick)..start();
   }
 
-  void _update() {
+  void _onTick(Duration elapsed) {
+    if (_lastElapsed == Duration.zero) {
+      _lastElapsed = elapsed;
+      return;
+    }
+    // delta time normalizado para 60fps (16.67ms)
+    final dt =
+        (elapsed - _lastElapsed).inMicroseconds / 16667.0;
+    _lastElapsed = elapsed;
+
     for (final p in _particles) {
-      p.x += p.speedX;
-      p.y += p.speedY;
+      p.x += p.speedX * dt;
+      p.y += p.speedY * dt;
       if (p.x < -0.05) p.x = 1.05;
       if (p.x > 1.05) p.x = -0.05;
       if (p.y < -0.05) p.y = 1.05;
       if (p.y > 1.05) p.y = -0.05;
     }
+    // marca para repaint sem reconstruir widget
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _ticker.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (_, __) => CustomPaint(
+    return RepaintBoundary(
+      child: CustomPaint(
         painter: _ParticlePainter(_particles, showLines: widget.showLines),
         size: Size.infinite,
       ),

@@ -38,14 +38,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
     _logoCtrl = AnimationController(
         duration: const Duration(milliseconds: 900), vsync: this);
-    _logoScale = CurvedAnimation(parent: _logoCtrl, curve: Curves.elasticOut);
+    _logoScale = CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOutBack);
     _logoFade = CurvedAnimation(parent: _logoCtrl, curve: const Interval(0, 0.4, curve: Curves.easeOut));
 
     _cardCtrl = AnimationController(
         duration: const Duration(milliseconds: 700), vsync: this);
     _cardFade = CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOut);
-    _cardSlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOutCubic));
+    _cardSlide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOutQuart));
 
     _logoCtrl.forward();
     Future.delayed(const Duration(milliseconds: 300), () {

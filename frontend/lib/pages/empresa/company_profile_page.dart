@@ -30,10 +30,10 @@ class _CompanyProfilePageState extends State<CompanyProfilePage>
   @override
   void initState() {
     super.initState();
-    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    _fadeCtrl = AnimationController(duration: const Duration(milliseconds: 420), vsync: this);
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutCubic));
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutQuart));
     _fadeCtrl.forward();
     _load();
   }
