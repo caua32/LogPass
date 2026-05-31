@@ -20,12 +20,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   String? _nomeAdmin;
   bool _loading = true;
   String? _error;
+  String? _usuariosErro;
   int? _filtroStatus;
 
   late TabController _tabCtrl;
-  late AnimationController _fadeCtrl;
-  late Animation<double> _fadeAnim;
-  late Animation<Offset> _slideAnim;
 
   static const _cyan = Color(0xFF44CABD);
   static const _bg = Color(0xFF0A1929);
@@ -35,18 +33,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   void initState() {
     super.initState();
     _tabCtrl = TabController(length: 2, vsync: this);
-    _fadeCtrl = AnimationController(
-        duration: const Duration(milliseconds: 420), vsync: this);
-    _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOutQuart));
     _init();
   }
 
   @override
   void dispose() {
     _tabCtrl.dispose();
-    _fadeCtrl.dispose();
     super.dispose();
   }
 
@@ -61,36 +53,35 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   }
 
   Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    setState(() { _loading = true; _error = null; _usuariosErro = null; });
+
     try {
-      final results = await Future.wait([
-        ApiService.getAdminReclamacoes(_token!),
-        ApiService.getAdminUsuarios(_token!),
-      ]);
+      final recLista = await ApiService.getAdminReclamacoes(_token!);
       setState(() {
-        _reclamacoes = (results[0] as List)
+        _reclamacoes = recLista
             .map((e) => Reclamacao.fromJson(e as Map<String, dynamic>))
             .toList();
-        _usuarios = (results[1] as List)
-            .map((e) => e as Map<String, dynamic>)
-            .toList();
-        _loading = false;
       });
-      _fadeCtrl.forward(from: 0);
     } on ApiException catch (e) {
-      setState(() {
-        _error = e.message;
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() {
-        _error = 'Erro ao carregar dados.';
-        _loading = false;
-      });
+      setState(() { _error = e.message; _loading = false; });
+      return;
+    } catch (e) {
+      setState(() { _error = 'Erro ao carregar reclamações: $e'; _loading = false; });
+      return;
     }
+
+    try {
+      final usrLista = await ApiService.getAdminUsuarios(_token!);
+      setState(() {
+        _usuarios = usrLista.map((e) => e as Map<String, dynamic>).toList();
+      });
+    } on ApiException catch (e) {
+      setState(() { _usuariosErro = e.message; _usuarios = []; });
+    } catch (e) {
+      setState(() { _usuariosErro = 'Erro: $e'; _usuarios = []; });
+    }
+
+    setState(() { _loading = false; });
   }
 
   Future<void> _updateStatus(Reclamacao r, int novoStatus) async {
@@ -651,18 +642,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                     child: CircularProgressIndicator(color: _cyan, strokeWidth: 2))
                 : _error != null
                     ? _buildError()
-                    : SlideTransition(
-                        position: _slideAnim,
-                        child: FadeTransition(
-                          opacity: _fadeAnim,
-                          child: TabBarView(
-                            controller: _tabCtrl,
-                            children: [
-                              _buildAbaReclamacoes(),
-                              _buildAbaUsuarios(),
-                            ],
-                          ),
-                        ),
+                    : TabBarView(
+                        controller: _tabCtrl,
+                        children: [
+                          _buildAbaReclamacoes(),
+                          _buildAbaUsuarios(),
+                        ],
                       ),
           ),
         ],
@@ -803,12 +788,39 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   // ─── Aba Reclamações ──────────────────────────────────────────────────────
 
   Widget _buildAbaReclamacoes() {
-    return Column(
-      children: [
-        _buildStats(),
-        _buildFiltros(),
-        Expanded(child: _buildListaReclamacoes()),
-      ],
+    return SizedBox.expand(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildStats(),
+          _buildFiltros(),
+          Expanded(
+            child: _filtradas.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.inbox_outlined,
+                            size: 56, color: _cyan.withValues(alpha: 0.3)),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Nenhuma reclamação encontrada',
+                          style: TextStyle(
+                              color: _cyan.withValues(alpha: 0.55),
+                              fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+                    itemCount: _filtradas.length,
+                    itemBuilder: (_, i) =>
+                        _buildCardReclamacao(_filtradas[i], i),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -931,47 +943,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     );
   }
 
-  Widget _buildListaReclamacoes() {
-    if (_filtradas.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inbox_outlined, size: 56, color: _cyan.withValues(alpha: 0.3)),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhuma reclamação encontrada',
-              style: TextStyle(color: _cyan.withValues(alpha: 0.55), fontSize: 15),
-            ),
-          ],
-        ),
-      );
-    }
-    return RefreshIndicator(
-      onRefresh: _load,
-      color: _cyan,
-      backgroundColor: _card,
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
-        itemCount: _filtradas.length,
-        itemBuilder: (_, i) => _buildCardReclamacao(_filtradas[i], i),
-      ),
-    );
-  }
-
   Widget _buildCardReclamacao(Reclamacao r, int index) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 350 + (index * 55).clamp(0, 280)),
-      tween: Tween(begin: 0, end: 1),
-      curve: Curves.easeOutQuart,
-      builder: (_, value, child) => Transform.translate(
-        offset: Offset(0, 20 * (1 - value)),
-        child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
-      ),
+    return GestureDetector(
+      onTap: () => context.go('/admin/reclamacao/${r.id}', extra: r),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: _card,
+          color: const Color(0xFF1A3558),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: r.statusColor.withValues(alpha: 0.22)),
           boxShadow: [
@@ -989,14 +967,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: r.statusColor.withValues(alpha: 0.15)),
+                  bottom: BorderSide(color: r.statusColor.withOpacity(0.15)),
                 ),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: 6,
+                    height: 40,
                     decoration: BoxDecoration(
                       color: r.statusColor,
                       borderRadius: BorderRadius.circular(3),
@@ -1033,9 +1012,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: r.statusColor.withValues(alpha: 0.18),
+                      color: r.statusColor.withOpacity(0.18),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: r.statusColor.withValues(alpha: 0.50)),
+                      border: Border.all(color: r.statusColor.withOpacity(0.50)),
                     ),
                     child: Text(
                       r.statusNome,
@@ -1131,6 +1110,30 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   // ─── Aba Usuários ─────────────────────────────────────────────────────────
 
   Widget _buildAbaUsuarios() {
+    if (_usuariosErro != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Color(0xFFFF6B6B), size: 40),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                _usuariosErro!,
+                style: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 13),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: _load,
+              child: const Text('Tentar novamente', style: TextStyle(color: _cyan)),
+            ),
+          ],
+        ),
+      );
+    }
     if (_usuarios.isEmpty) {
       return Center(
         child: Column(
@@ -1173,15 +1176,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     final createdAt = u['created_at']?.toString() ?? '';
     final tipoColor = isEmpresa ? Colors.blueAccent : Colors.orange;
 
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 300 + (index * 40).clamp(0, 240)),
-      tween: Tween(begin: 0, end: 1),
-      curve: Curves.easeOutQuart,
-      builder: (_, value, child) => Transform.translate(
-        offset: Offset(0, 16 * (1 - value)),
-        child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
-      ),
-      child: Container(
+    return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -1255,7 +1250,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             ),
           ],
         ),
-      ),
     );
   }
 

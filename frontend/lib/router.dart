@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'models/reclamacao_model.dart';
 import 'providers/auth_provider.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/auth/register_page.dart';
@@ -12,6 +13,7 @@ import 'pages/empresa/data_consult_page.dart';
 import 'pages/empresa/problems_notification_page.dart';
 import 'pages/empresa/reports_page.dart';
 import 'pages/admin/admin_dashboard_page.dart';
+import 'pages/admin/admin_reclamacao_detail_page.dart';
 import 'pages/chat/chat_page.dart';
 import 'pages/consumidor/minhas_reclamacoes_page.dart';
 
@@ -50,6 +52,13 @@ GoRouter buildRouter(AuthProvider auth) {
       GoRoute(path: '/empresa/problemas', builder: (c, s) => const ProblemsNotificationPage()),
       GoRoute(path: '/empresa/relatorios', builder: (c, s) => const ReportsPage()),
       GoRoute(path: '/admin/dashboard', builder: (c, s) => const AdminDashboardPage()),
+      GoRoute(
+        path: '/admin/reclamacao/:id',
+        builder: (c, s) {
+          final rec = s.extra as Reclamacao;
+          return AdminReclamacaoDetailPage(reclamacao: rec);
+        },
+      ),
       GoRoute(path: '/minhas-reclamacoes', builder: (c, s) => const MinhasReclamacoesPage()),
       GoRoute(
         path: '/chat/:id',
