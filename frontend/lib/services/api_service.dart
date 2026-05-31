@@ -203,6 +203,23 @@ class ApiService {
     return _decode(res);
   }
 
+  static Future<List<dynamic>> getAdminUsuarios(String token) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/admin/usuarios'), headers: _headers(token: token))
+        .timeout(_timeout);
+    final body = _decode(res);
+    return body['usuarios'] as List<dynamic>? ?? [];
+  }
+
+  static Future<Map<String, dynamic>> criarAdminUsuario(
+      String token, Map<String, dynamic> dados) async {
+    final res = await http
+        .post(Uri.parse('$kBaseUrl/admin/usuarios'),
+            headers: _headers(token: token), body: jsonEncode(dados))
+        .timeout(_timeout);
+    return _decode(res);
+  }
+
   static Future<List<dynamic>> getAdminReclamacoes(String token) async {
     final res = await http
         .get(Uri.parse('$kBaseUrl/admin/reclamacoes'), headers: _headers(token: token))

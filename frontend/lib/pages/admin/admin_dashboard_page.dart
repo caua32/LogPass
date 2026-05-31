@@ -13,25 +13,28 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   List<Reclamacao> _reclamacoes = [];
+  List<Map<String, dynamic>> _usuarios = [];
   String? _token;
   String? _nomeAdmin;
   bool _loading = true;
   String? _error;
   int? _filtroStatus;
 
-  static const _cyan = Color(0xFF44CABD);
-  static const _bg = Color(0xFF0A1929);
-  static const _card = Color(0xFF0D2137);
-
+  late TabController _tabCtrl;
   late AnimationController _fadeCtrl;
   late Animation<double> _fadeAnim;
   late Animation<Offset> _slideAnim;
 
+  static const _cyan = Color(0xFF44CABD);
+  static const _bg = Color(0xFF0A1929);
+  static const _card = Color(0xFF0D2137);
+
   @override
   void initState() {
     super.initState();
+    _tabCtrl = TabController(length: 2, vsync: this);
     _fadeCtrl = AnimationController(
         duration: const Duration(milliseconds: 420), vsync: this);
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
@@ -42,6 +45,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
 
   @override
   void dispose() {
+    _tabCtrl.dispose();
     _fadeCtrl.dispose();
     super.dispose();
   }
@@ -62,10 +66,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       _error = null;
     });
     try {
-      final lista = await ApiService.getAdminReclamacoes(_token!);
+      final results = await Future.wait([
+        ApiService.getAdminReclamacoes(_token!),
+        ApiService.getAdminUsuarios(_token!),
+      ]);
       setState(() {
-        _reclamacoes = lista
+        _reclamacoes = (results[0] as List)
             .map((e) => Reclamacao.fromJson(e as Map<String, dynamic>))
+            .toList();
+        _usuarios = (results[1] as List)
+            .map((e) => e as Map<String, dynamic>)
             .toList();
         _loading = false;
       });
@@ -77,7 +87,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       });
     } catch (_) {
       setState(() {
-        _error = 'Erro ao carregar reclamações.';
+        _error = 'Erro ao carregar dados.';
         _loading = false;
       });
     }
@@ -96,8 +106,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ]),
           backgroundColor: _cyan,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ));
       }
     } on ApiException catch (e) {
@@ -106,11 +115,255 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           content: Text(e.message),
           backgroundColor: const Color(0xFFFF6B6B),
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ));
       }
     }
+  }
+
+  Future<void> _abrirCriarUsuario() async {
+    final nomeCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+    final senhaCtrl = TextEditingController();
+    final cpfCtrl = TextEditingController();
+    final cnpjCtrl = TextEditingController();
+    String tipoSelecionado = 'consumidor';
+    bool obscureSenha = true;
+    final formKey = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: _card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setS) {
+          bool salvando = false;
+          final isEmpresa = tipoSelecionado == 'empresa';
+          return SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40, height: 4,
+                          decoration: BoxDecoration(
+                            color: _cyan.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(children: [
+                        Icon(Icons.person_add_outlined, color: _cyan, size: 20),
+                        const SizedBox(width: 8),
+                        const Text('Criar Usuário',
+                            style: TextStyle(
+                                color: Color(0xFFE8F8F7),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
+                      ]),
+                      const SizedBox(height: 20),
+                      Text('Tipo',
+                          style: TextStyle(
+                              color: _cyan.withValues(alpha: 0.75),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF071520),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: _cyan.withValues(alpha: 0.18)),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: tipoSelecionado,
+                            dropdownColor: _card,
+                            isExpanded: true,
+                            style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
+                            iconEnabledColor: _cyan,
+                            items: const [
+                              DropdownMenuItem(value: 'consumidor', child: Text('Consumidor')),
+                              DropdownMenuItem(value: 'empresa', child: Text('Empresa')),
+                            ],
+                            onChanged: (v) => setS(() => tipoSelecionado = v!),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(
+                        isEmpresa ? nomeCtrl : nomeCtrl,
+                        isEmpresa ? 'Nome da Empresa' : 'Nome',
+                        isEmpresa ? Icons.business_outlined : Icons.person_outline,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(emailCtrl, 'Email', Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return 'Campo obrigatório';
+                            if (!v.contains('@')) return 'Email inválido';
+                            return null;
+                          }),
+                      const SizedBox(height: 12),
+                      _buildFormField(
+                        senhaCtrl, 'Senha', Icons.lock_outline,
+                        obscure: obscureSenha,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureSenha ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            color: _cyan.withValues(alpha: 0.6), size: 18,
+                          ),
+                          onPressed: () => setS(() => obscureSenha = !obscureSenha),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Campo obrigatório';
+                          if (v.trim().length < 6) return 'Mínimo 6 caracteres';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (!isEmpresa)
+                        _buildFormField(cpfCtrl, 'CPF', Icons.badge_outlined,
+                            keyboardType: TextInputType.number),
+                      if (isEmpresa)
+                        _buildFormField(cnpjCtrl, 'CNPJ', Icons.corporate_fare_outlined,
+                            keyboardType: TextInputType.number),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _cyan,
+                            foregroundColor: _bg,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: salvando
+                              ? null
+                              : () async {
+                                  if (!formKey.currentState!.validate()) return;
+                                  setS(() => salvando = true);
+                                  try {
+                                    final dados = {
+                                      'nome': nomeCtrl.text.trim(),
+                                      'email': emailCtrl.text.trim(),
+                                      'senha': senhaCtrl.text.trim(),
+                                      'tipo': tipoSelecionado,
+                                      if (!isEmpresa) 'cpf': cpfCtrl.text.trim(),
+                                      if (isEmpresa) 'cnpj': cnpjCtrl.text.trim(),
+                                      if (isEmpresa) 'nomeempresa': nomeCtrl.text.trim(),
+                                    };
+                                    await ApiService.criarAdminUsuario(_token!, dados);
+                                    if (!mounted) return;
+                                    Navigator.pop(ctx);
+                                    await _load();
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: const Text('Usuário criado com sucesso!'),
+                                        backgroundColor: _cyan,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8)),
+                                      ));
+                                    }
+                                  } on ApiException catch (e) {
+                                    setS(() => salvando = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text(e.message),
+                                      backgroundColor: const Color(0xFFFF6B6B),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                    ));
+                                  } catch (_) {
+                                    setS(() => salvando = false);
+                                  }
+                                },
+                          child: salvando
+                              ? const SizedBox(
+                                  width: 18, height: 18,
+                                  child: CircularProgressIndicator(
+                                      color: Color(0xFF0A1929), strokeWidth: 2))
+                              : const Text('Criar Usuário',
+                                  style: TextStyle(fontWeight: FontWeight.w700)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFormField(
+    TextEditingController ctrl,
+    String label,
+    IconData icon, {
+    bool obscure = false,
+    Widget? suffixIcon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: TextStyle(
+                color: _cyan.withValues(alpha: 0.75),
+                fontSize: 12,
+                fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: ctrl,
+          obscureText: obscure,
+          keyboardType: keyboardType,
+          style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
+          validator: validator ??
+              (v) => (v == null || v.trim().isEmpty) ? 'Campo obrigatório' : null,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xFF071520),
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            prefixIcon: Icon(icon, color: _cyan.withValues(alpha: 0.5), size: 18),
+            suffixIcon: suffixIcon,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: _cyan.withValues(alpha: 0.18)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: _cyan.withValues(alpha: 0.18)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: _cyan, width: 1.5),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFFF6B6B)),
+            ),
+            errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _abrirConfiguracoes() async {
@@ -375,29 +628,79 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
+      floatingActionButton: AnimatedBuilder(
+        animation: _tabCtrl,
+        builder: (_, __) {
+          if (_tabCtrl.index != 1 || _loading) return const SizedBox.shrink();
+          return FloatingActionButton(
+            onPressed: _abrirCriarUsuario,
+            backgroundColor: _cyan,
+            foregroundColor: _bg,
+            child: const Icon(Icons.person_add_outlined),
+          );
+        },
+      ),
       body: Column(
         children: [
           _buildHeader(),
+          if (!_loading && _error == null)
+            _buildTabBar(),
           Expanded(
             child: _loading
                 ? const Center(
-                    child: CircularProgressIndicator(
-                        color: _cyan, strokeWidth: 2))
+                    child: CircularProgressIndicator(color: _cyan, strokeWidth: 2))
                 : _error != null
                     ? _buildError()
                     : SlideTransition(
                         position: _slideAnim,
                         child: FadeTransition(
                           opacity: _fadeAnim,
-                          child: Column(
+                          child: TabBarView(
+                            controller: _tabCtrl,
                             children: [
-                              _buildStats(),
-                              _buildFiltros(),
-                              Expanded(child: _buildLista()),
+                              _buildAbaReclamacoes(),
+                              _buildAbaUsuarios(),
                             ],
                           ),
                         ),
                       ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      color: _card,
+      child: TabBar(
+        controller: _tabCtrl,
+        indicatorColor: _cyan,
+        indicatorWeight: 2,
+        labelColor: _cyan,
+        unselectedLabelColor: _cyan.withValues(alpha: 0.45),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+        unselectedLabelStyle: const TextStyle(fontSize: 13),
+        tabs: [
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.inbox_outlined, size: 16),
+                const SizedBox(width: 6),
+                Text('Reclamações (${_reclamacoes.length})'),
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.people_outline, size: 16),
+                const SizedBox(width: 6),
+                Text('Usuários (${_usuarios.length})'),
+              ],
+            ),
           ),
         ],
       ),
@@ -438,8 +741,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                     spreadRadius: 1),
               ],
             ),
-            child: const Icon(Icons.admin_panel_settings,
-                color: _bg, size: 22),
+            child: const Icon(Icons.admin_panel_settings, color: _bg, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -455,13 +757,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                           letterSpacing: 1)),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                     decoration: BoxDecoration(
                       color: _cyan.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: _cyan.withValues(alpha: 0.30)),
+                      border: Border.all(color: _cyan.withValues(alpha: 0.30)),
                     ),
                     child: const Text('ADMIN',
                         style: TextStyle(
@@ -475,9 +775,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   Text(
                     _nomeAdmin!,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: _cyan.withValues(alpha: 0.60)),
+                    style: TextStyle(fontSize: 11, color: _cyan.withValues(alpha: 0.60)),
                   ),
               ],
             ),
@@ -494,12 +792,23 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
           IconButton(
             onPressed: _logout,
-            icon: Icon(Icons.logout_rounded,
-                color: _cyan.withValues(alpha: 0.75), size: 20),
+            icon: Icon(Icons.logout_rounded, color: _cyan.withValues(alpha: 0.75), size: 20),
             tooltip: 'Sair',
           ),
         ],
       ),
+    );
+  }
+
+  // ─── Aba Reclamações ──────────────────────────────────────────────────────
+
+  Widget _buildAbaReclamacoes() {
+    return Column(
+      children: [
+        _buildStats(),
+        _buildFiltros(),
+        Expanded(child: _buildListaReclamacoes()),
+      ],
     );
   }
 
@@ -622,19 +931,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     );
   }
 
-  Widget _buildLista() {
+  Widget _buildListaReclamacoes() {
     if (_filtradas.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_outlined,
-                size: 56, color: _cyan.withValues(alpha: 0.3)),
+            Icon(Icons.inbox_outlined, size: 56, color: _cyan.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
             Text(
               'Nenhuma reclamação encontrada',
-              style: TextStyle(
-                  color: _cyan.withValues(alpha: 0.55), fontSize: 15),
+              style: TextStyle(color: _cyan.withValues(alpha: 0.55), fontSize: 15),
             ),
           ],
         ),
@@ -647,32 +954,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
         itemCount: _filtradas.length,
-        itemBuilder: (_, i) => _buildCard(_filtradas[i], i),
+        itemBuilder: (_, i) => _buildCardReclamacao(_filtradas[i], i),
       ),
     );
   }
 
-  Widget _buildError() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: Color(0xFFFF6B6B), size: 40),
-          const SizedBox(height: 12),
-          Text(_error!,
-              style: const TextStyle(color: Color(0xFFFF6B6B))),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: _load,
-            child: const Text('Tentar novamente',
-                style: TextStyle(color: _cyan)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCard(Reclamacao r, int index) {
+  Widget _buildCardReclamacao(Reclamacao r, int index) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 350 + (index * 55).clamp(0, 280)),
       tween: Tween(begin: 0, end: 1),
@@ -686,8 +973,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         decoration: BoxDecoration(
           color: _card,
           borderRadius: BorderRadius.circular(14),
-          border:
-              Border.all(color: r.statusColor.withValues(alpha: 0.22)),
+          border: Border.all(color: r.statusColor.withValues(alpha: 0.22)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.22),
@@ -699,13 +985,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header do card
             Container(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(
-                      color: r.statusColor.withValues(alpha: 0.15)),
+                  bottom: BorderSide(color: r.statusColor.withValues(alpha: 0.15)),
                 ),
               ),
               child: Row(
@@ -747,13 +1031,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: r.statusColor.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(20),
-                      border:
-                          Border.all(color: r.statusColor.withValues(alpha: 0.50)),
+                      border: Border.all(color: r.statusColor.withValues(alpha: 0.50)),
                     ),
                     child: Text(
                       r.statusNome,
@@ -766,7 +1048,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 ],
               ),
             ),
-            // Corpo do card
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
               child: Column(
@@ -774,32 +1055,24 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 children: [
                   Row(children: [
                     if (r.nomeEmpresa != null) ...[
-                      Icon(Icons.business_outlined,
-                          size: 13,
-                          color: _cyan.withValues(alpha: 0.55)),
+                      Icon(Icons.business_outlined, size: 13, color: _cyan.withValues(alpha: 0.55)),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           r.nomeEmpresa!,
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: _cyan.withValues(alpha: 0.65)),
+                          style: TextStyle(fontSize: 12, color: _cyan.withValues(alpha: 0.65)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                     if (r.nomeConsumidor != null) ...[
                       const SizedBox(width: 12),
-                      Icon(Icons.person_outline,
-                          size: 13,
-                          color: _cyan.withValues(alpha: 0.55)),
+                      Icon(Icons.person_outline, size: 13, color: _cyan.withValues(alpha: 0.55)),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           r.nomeConsumidor!,
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: _cyan.withValues(alpha: 0.65)),
+                          style: TextStyle(fontSize: 12, color: _cyan.withValues(alpha: 0.65)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -823,34 +1096,23 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                       final isActive = r.idStatus == e.key;
                       final color = _statusColor(e.key);
                       return GestureDetector(
-                        onTap: isActive
-                            ? null
-                            : () => _updateStatus(r, e.key),
+                        onTap: isActive ? null : () => _updateStatus(r, e.key),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: isActive
-                                ? color.withValues(alpha: 0.25)
-                                : Colors.transparent,
+                            color: isActive ? color.withValues(alpha: 0.25) : Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: isActive
-                                  ? color
-                                  : color.withValues(alpha: 0.35),
+                              color: isActive ? color : color.withValues(alpha: 0.35),
                             ),
                           ),
                           child: Text(
                             e.value,
                             style: TextStyle(
-                              color: isActive
-                                  ? color
-                                  : color.withValues(alpha: 0.60),
+                              color: isActive ? color : color.withValues(alpha: 0.60),
                               fontSize: 11,
-                              fontWeight: isActive
-                                  ? FontWeight.w700
-                                  : FontWeight.normal,
+                              fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -862,6 +1124,164 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // ─── Aba Usuários ─────────────────────────────────────────────────────────
+
+  Widget _buildAbaUsuarios() {
+    if (_usuarios.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 56, color: _cyan.withValues(alpha: 0.3)),
+            const SizedBox(height: 16),
+            Text(
+              'Nenhum usuário cadastrado',
+              style: TextStyle(color: _cyan.withValues(alpha: 0.55), fontSize: 15),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Toque em + para criar um usuário',
+              style: TextStyle(color: _cyan.withValues(alpha: 0.35), fontSize: 12),
+            ),
+          ],
+        ),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: _load,
+      color: _cyan,
+      backgroundColor: _card,
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+        itemCount: _usuarios.length,
+        itemBuilder: (_, i) => _buildCardUsuario(_usuarios[i], i),
+      ),
+    );
+  }
+
+  Widget _buildCardUsuario(Map<String, dynamic> u, int index) {
+    final tipo = u['tipo'] as String? ?? '';
+    final isEmpresa = tipo == 'empresa';
+    final nome = isEmpresa
+        ? (u['nomeempresa'] as String? ?? u['nome'] as String? ?? '')
+        : (u['nome'] as String? ?? '');
+    final email = u['email'] as String? ?? '';
+    final createdAt = u['created_at']?.toString() ?? '';
+    final tipoColor = isEmpresa ? Colors.blueAccent : Colors.orange;
+
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 300 + (index * 40).clamp(0, 240)),
+      tween: Tween(begin: 0, end: 1),
+      curve: Curves.easeOutQuart,
+      builder: (_, value, child) => Transform.translate(
+        offset: Offset(0, 16 * (1 - value)),
+        child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: _card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: tipoColor.withValues(alpha: 0.20)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.18),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44, height: 44,
+              decoration: BoxDecoration(
+                color: tipoColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: tipoColor.withValues(alpha: 0.30)),
+              ),
+              child: Icon(
+                isEmpresa ? Icons.business_outlined : Icons.person_outline,
+                color: tipoColor, size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    nome,
+                    style: const TextStyle(
+                        color: Color(0xFFE8F8F7),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    email,
+                    style: TextStyle(color: _cyan.withValues(alpha: 0.55), fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (createdAt.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      _formatDate(createdAt),
+                      style: TextStyle(color: _cyan.withValues(alpha: 0.35), fontSize: 11),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: tipoColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: tipoColor.withValues(alpha: 0.35)),
+              ),
+              child: Text(
+                isEmpresa ? 'Empresa' : 'Consumidor',
+                style: TextStyle(
+                    color: tipoColor, fontSize: 10, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(String raw) {
+    try {
+      final dt = DateTime.parse(raw).toLocal();
+      return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, color: Color(0xFFFF6B6B), size: 40),
+          const SizedBox(height: 12),
+          Text(_error!, style: const TextStyle(color: Color(0xFFFF6B6B))),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: _load,
+            child: const Text('Tentar novamente', style: TextStyle(color: _cyan)),
+          ),
+        ],
       ),
     );
   }
