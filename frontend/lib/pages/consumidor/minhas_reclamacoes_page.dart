@@ -630,6 +630,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
               blurRadius: 10, offset: const Offset(0, 4),
             )],
           ),
+          child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -710,6 +711,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),
