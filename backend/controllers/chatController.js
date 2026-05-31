@@ -26,10 +26,13 @@ exports.getMensagens = async (req, res) => {
   const { reclamacao_id } = req.params;
   const usuarioId = req.user.id;
   const tipo = req.user.tipo;
+  const isAdmin = req.user.role === 'admin';
 
   try {
-    const ok = await _verificarAcesso(reclamacao_id, usuarioId, tipo);
-    if (!ok) return res.status(403).json({ message: 'Acesso negado a esta reclamação.' });
+    if (!isAdmin) {
+      const ok = await _verificarAcesso(reclamacao_id, usuarioId, tipo);
+      if (!ok) return res.status(403).json({ message: 'Acesso negado a esta reclamação.' });
+    }
 
     const result = await pool.query(
       `SELECT m.id, m.remetente_id, m.remetente_tipo, m.mensagem, m.created_at,
@@ -58,6 +61,7 @@ exports.enviarMensagem = async (req, res) => {
   const { mensagem } = req.body;
   const usuarioId = req.user.id;
   const tipo = req.user.tipo;
+  const isAdmin = req.user.role === 'admin';
 
   if (!mensagem || !mensagem.trim()) {
     return res.status(400).json({ message: 'Mensagem não pode estar vazia.' });
@@ -67,25 +71,33 @@ exports.enviarMensagem = async (req, res) => {
   }
 
   try {
-    const ok = await _verificarAcesso(reclamacao_id, usuarioId, tipo);
-    if (!ok) return res.status(403).json({ message: 'Acesso negado a esta reclamação.' });
-
     let remetenteId;
-    if (tipo === 'consumidor') {
-      const r = await pool.query('SELECT id FROM consumidor WHERE usuario_id = $1', [usuarioId]);
-      if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil de consumidor não encontrado.' });
-      remetenteId = r.rows[0].id;
+    let remetenteTipo;
+
+    if (isAdmin) {
+      remetenteId = usuarioId;
+      remetenteTipo = 'admin';
     } else {
-      const r = await pool.query('SELECT id FROM empresa WHERE usuario_id = $1', [usuarioId]);
-      if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil de empresa não encontrado.' });
-      remetenteId = r.rows[0].id;
+      const ok = await _verificarAcesso(reclamacao_id, usuarioId, tipo);
+      if (!ok) return res.status(403).json({ message: 'Acesso negado a esta reclamação.' });
+
+      remetenteTipo = tipo;
+      if (tipo === 'consumidor') {
+        const r = await pool.query('SELECT id FROM consumidor WHERE usuario_id = $1', [usuarioId]);
+        if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil de consumidor não encontrado.' });
+        remetenteId = r.rows[0].id;
+      } else {
+        const r = await pool.query('SELECT id FROM empresa WHERE usuario_id = $1', [usuarioId]);
+        if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil de empresa não encontrado.' });
+        remetenteId = r.rows[0].id;
+      }
     }
 
     const result = await pool.query(
       `INSERT INTO mensagem_chat (reclamacao_id, remetente_id, remetente_tipo, mensagem)
        VALUES ($1, $2, $3, $4)
        RETURNING id, remetente_id, remetente_tipo, mensagem, created_at`,
-      [reclamacao_id, remetenteId, tipo, mensagem.trim()]
+      [reclamacao_id, remetenteId, remetenteTipo, mensagem.trim()]
     );
 
     res.status(201).json({ mensagem: result.rows[0] });
