@@ -401,20 +401,30 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         decoration: BoxDecoration(
           color: _bg,
           borderRadius: BorderRadius.circular(12),
-          border: Border(
-            left:   BorderSide(color: corNivel, width: 4),
-            top:    BorderSide(color: corNivel.withValues(alpha: 0.20)),
-            right:  BorderSide(color: corNivel.withValues(alpha: 0.20)),
-            bottom: BorderSide(color: corNivel.withValues(alpha: 0.20)),
-          ),
+          border: Border.all(color: corNivel.withValues(alpha: 0.20)),
           boxShadow: [BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 6, offset: const Offset(0, 3),
           )],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: corNivel,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(
                       child: Text(r.titulo, style: const TextStyle(
@@ -482,9 +492,13 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                       ),
                     ),
                   ]),
-                ]),
+                  ]),
+                ),
+              ),
+            ],
           ),
         ),
+      ),
     );
   }
 }
