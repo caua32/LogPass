@@ -466,12 +466,10 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
   }
 
   Widget _buildList() {
-    final lista = _filtradas;
     return Column(
       children: [
-        _buildFiltros(),
         Padding(
-          padding: const EdgeInsets.fromLTRB(18, 6, 18, 2),
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 2),
           child: Row(
             children: [
               Container(
@@ -482,7 +480,7 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
                   border: Border.all(color: _cyan.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  '${lista.length} solicitaç${lista.length != 1 ? 'ões' : 'ão'}',
+                  '${_reclamacoes.length} solicitaç${_reclamacoes.length != 1 ? 'ões' : 'ão'}',
                   style: const TextStyle(
                     color: _cyan, fontSize: 12, fontWeight: FontWeight.bold,
                   ),
@@ -497,23 +495,16 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
           ),
         ),
         Expanded(
-          child: lista.isEmpty
-              ? Center(
-                  child: Text(
-                    'Nenhuma solicitação neste nível.',
-                    style: TextStyle(color: _cyan.withValues(alpha: 0.5), fontSize: 13),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  color: _cyan,
-                  backgroundColor: _card,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(18),
-                    itemCount: lista.length,
-                    itemBuilder: (_, i) => _buildCard(lista[i], i),
-                  ),
-                ),
+          child: RefreshIndicator(
+            onRefresh: _load,
+            color: _cyan,
+            backgroundColor: _card,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(18),
+              itemCount: _reclamacoes.length,
+              itemBuilder: (_, i) => _buildCard(_reclamacoes[i], i),
+            ),
+          ),
         ),
       ],
     );
