@@ -7,6 +7,7 @@ exports.getTodasReclamacoes = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
+              r.status_id,
               s.descricao AS status,
               e.nomeempresa,
               c.nome AS consumidor_nome, c.email AS consumidor_email
@@ -57,6 +58,76 @@ exports.updateConfiguracoes = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erro ao atualizar configurações.' });
+  }
+};
+
+exports.getUsuarios = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.nome, u.email, u.tipo, u.created_at,
+              c.cpf, c.telefone,
+              e.nomeempresa, e.cnpj
+       FROM usuario u
+       LEFT JOIN consumidor c ON c.usuario_id = u.id
+       LEFT JOIN empresa e ON e.usuario_id = u.id
+       ORDER BY u.created_at DESC`
+    );
+    res.json({ usuarios: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar usuários.' });
+  }
+};
+
+exports.criarUsuario = async (req, res) => {
+  const { nome, email, senha, tipo, cpf, cnpj, nomeempresa } = req.body;
+
+  if (!nome || !email || !senha || !tipo) {
+    return res.status(400).json({ message: 'Campos obrigatórios: nome, email, senha, tipo.' });
+  }
+  if (!['consumidor', 'empresa'].includes(tipo)) {
+    return res.status(400).json({ message: 'Tipo deve ser "consumidor" ou "empresa".' });
+  }
+  if (tipo === 'consumidor' && !cpf) {
+    return res.status(400).json({ message: 'CPF é obrigatório para consumidor.' });
+  }
+  if (tipo === 'empresa' && !cnpj) {
+    return res.status(400).json({ message: 'CNPJ é obrigatório para empresa.' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const hashed = await bcrypt.hash(senha, 10);
+    const uRes = await client.query(
+      `INSERT INTO usuario (nome, email, senha, tipo) VALUES ($1, $2, $3, $4) RETURNING id, nome, email, tipo`,
+      [nome, email, hashed, tipo]
+    );
+    const user = uRes.rows[0];
+
+    if (tipo === 'consumidor') {
+      await client.query(
+        `INSERT INTO consumidor (usuario_id, nome, cpf, email) VALUES ($1, $2, $3, $4)`,
+        [user.id, nome, cpf, email]
+      );
+    } else {
+      await client.query(
+        `INSERT INTO empresa (usuario_id, nomeempresa, cnpj) VALUES ($1, $2, $3)`,
+        [user.id, nomeempresa || nome, cnpj]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({ message: 'Usuário criado com sucesso!', usuario: user });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    if (err.code === '23505') {
+      return res.status(409).json({ message: 'Email, CPF ou CNPJ já cadastrado.' });
+    }
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao criar usuário.' });
+  } finally {
+    client.release();
   }
 };
 

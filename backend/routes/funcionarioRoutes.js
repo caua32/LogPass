@@ -15,5 +15,7 @@ router.post('/admin/login', loginRules, validate, funcionarioController.loginFun
 router.get('/admin/reclamacoes',    verifyToken, requireAdmin, funcionarioController.getTodasReclamacoes);
 router.get('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioController.getConfiguracoes);
 router.put('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioController.updateConfiguracoes);
+router.get('/admin/usuarios',       verifyToken, requireAdmin, funcionarioController.getUsuarios);
+router.post('/admin/usuarios',      verifyToken, requireAdmin, funcionarioController.criarUsuario);
 
 module.exports = router;
