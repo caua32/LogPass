@@ -65,13 +65,29 @@ async function seed() {
     }
     console.log('✅ [2/6] 3 funcionários inseridos');
 
-    // ─── 3. Permissões dos funcionários → Tech Store (empresa_id = 1) ────────
+    // ─── 3. Buscar IDs reais de empresa e consumidor pelas personas ─────────
+    const empRow = await client.query(
+      `SELECT e.id FROM empresa e JOIN usuario u ON u.id = e.usuario_id WHERE u.email = 'techstore@email.com'`
+    );
+    const consRow = await client.query(
+      `SELECT c.id FROM consumidor c JOIN usuario u ON u.id = c.usuario_id WHERE u.email = 'joao@email.com'`
+    );
+
+    if (empRow.rows.length === 0 || consRow.rows.length === 0) {
+      throw new Error('Personas base (joao@email.com / techstore@email.com) não encontradas. Cadastre-as antes de rodar o seed.');
+    }
+
+    const EMPRESA_ID    = empRow.rows[0].id;
+    const CONSUMIDOR_ID = consRow.rows[0].id;
+    console.log(`   IDs detectados → empresa: ${EMPRESA_ID}, consumidor: ${CONSUMIDOR_ID}`);
+
+    // ─── Permissões dos funcionários → Tech Store ────────────────────────────
     for (const fid of funcIds) {
       await client.query(
         `INSERT INTO permissao_funcionario (funcionario_id, empresa_id)
-         VALUES ($1, 1)
+         VALUES ($1, $2)
          ON CONFLICT DO NOTHING`,
-        [fid]
+        [fid, EMPRESA_ID]
       );
     }
     console.log('✅ [3/6] Permissões vinculadas à Tech Store');
@@ -125,10 +141,10 @@ async function seed() {
       const res = await client.query(
         `INSERT INTO reclamacao
            (empresa_id, consumidor_id, numero_pedido, motivo, forma_solucao, status_id, data_abertura, data_resolucao)
-         VALUES (1, 1, $1, $2, $3, $4, $5, $6)
+         VALUES ($7, $8, $1, $2, $3, $4, $5, $6)
          ON CONFLICT DO NOTHING
          RETURNING id`,
-        [r.numero_pedido, r.motivo, r.forma_solucao, r.status_id, r.data_abertura, r.data_resolucao]
+        [r.numero_pedido, r.motivo, r.forma_solucao, r.status_id, r.data_abertura, r.data_resolucao, EMPRESA_ID, CONSUMIDOR_ID]
       );
       if (res.rows.length > 0) {
         recIds.push(res.rows[0].id);

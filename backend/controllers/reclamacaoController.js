@@ -38,6 +38,7 @@ exports.getByEmpresa = async (req, res) => {
 
     const result = await pool.query(
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
+              r.status_id,
               s.descricao AS status,
               c.nome AS consumidor_nome, c.email AS consumidor_email
        FROM reclamacao r
@@ -64,6 +65,7 @@ exports.getByConsumidor = async (req, res) => {
 
     const result = await pool.query(
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
+              r.status_id,
               s.descricao AS status, e.nomeempresa
        FROM reclamacao r
        JOIN status_reclamacao s ON s.id = r.status_id
