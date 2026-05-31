@@ -113,6 +113,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
+      resizeToAvoidBottomInset: false,
       body: Column(children: [
         AppHeader(
           title: 'Chat',

@@ -284,7 +284,7 @@ class _DataConsultPageState extends State<DataConsultPage> {
           button: true,
           label: 'Abrir chat da reclamação ${r.titulo}',
           child: GestureDetector(
-            onTap: () => context.go('/chat/${r.id}', extra: {'titulo': r.titulo}),
+            onTap: () => context.push('/chat/${r.id}', extra: {'titulo': r.titulo}),
             child: Container(
               width: 32, height: 32,
               decoration: BoxDecoration(

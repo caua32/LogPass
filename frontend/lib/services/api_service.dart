@@ -147,6 +147,52 @@ class ApiService {
     return _decodeList(res);
   }
 
+  static Future<Map<String, dynamic>> getConfiguracoes(String token) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/empresa/configuracoes'), headers: _headers(token: token))
+        .timeout(_timeout);
+    return _decode(res);
+  }
+
+  static Future<Map<String, dynamic>> getConfiguracoesConsumidor(String token) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/consumidor/configuracoes'), headers: _headers(token: token))
+        .timeout(_timeout);
+    return _decode(res);
+  }
+
+  static Future<Map<String, dynamic>> getAdminConfiguracoes(String token) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/admin/configuracoes'), headers: _headers(token: token))
+        .timeout(_timeout);
+    return _decode(res);
+  }
+
+  static Future<void> updateConfiguracoes(String token, Map<String, dynamic> dados) async {
+    final res = await http
+        .put(Uri.parse('$kBaseUrl/admin/configuracoes'),
+            headers: _headers(token: token), body: jsonEncode(dados))
+        .timeout(_timeout);
+    _decode(res);
+  }
+
+  static Future<void> editarReclamacao(
+      String token, int id, Map<String, dynamic> dados) async {
+    final res = await http
+        .put(Uri.parse('$kBaseUrl/reclamacao/$id'),
+            headers: _headers(token: token), body: jsonEncode(dados))
+        .timeout(_timeout);
+    _decode(res);
+  }
+
+  static Future<void> deletarReclamacao(String token, int id) async {
+    final res = await http
+        .delete(Uri.parse('$kBaseUrl/reclamacao/$id'),
+            headers: _headers(token: token))
+        .timeout(_timeout);
+    _decode(res);
+  }
+
   // Admin
   static Future<Map<String, dynamic>> adminLogin(String email, String senha) async {
     final res = await http

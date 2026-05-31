@@ -113,6 +113,207 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     }
   }
 
+  Future<void> _abrirConfiguracoes() async {
+    Map<String, int> config = {
+      'nivel_aceitavel_horas': 24,
+      'nivel_ruim_horas': 48,
+      'nivel_critico_horas': 72,
+    };
+    try {
+      final data = await ApiService.getAdminConfiguracoes(_token!);
+      final cfgRaw = data['configuracoes'] as Map<String, dynamic>? ?? {};
+      config = cfgRaw.map((k, v) => MapEntry(k, (v as num).toInt()));
+    } catch (_) {}
+
+    if (!mounted) return;
+
+    final aceitavelCtrl = TextEditingController(
+        text: (config['nivel_aceitavel_horas'] ?? 24).toString());
+    final ruimCtrl = TextEditingController(
+        text: (config['nivel_ruim_horas'] ?? 48).toString());
+    final criticoCtrl = TextEditingController(
+        text: (config['nivel_critico_horas'] ?? 72).toString());
+    final formKey = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: _card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setS) {
+          bool salvando = false;
+          return Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(child: Container(
+                        width: 40, height: 4,
+                        decoration: BoxDecoration(
+                          color: _cyan.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      )),
+                      const SizedBox(height: 16),
+                      Row(children: [
+                        Icon(Icons.settings_outlined, color: _cyan, size: 20),
+                        const SizedBox(width: 8),
+                        const Text('Configurações do Sistema',
+                            style: TextStyle(
+                                color: Color(0xFFE8F8F7),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
+                      ]),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Define os limites de horas para classificação de severidade das reclamações.',
+                        style: TextStyle(
+                            color: _cyan.withValues(alpha: 0.50), fontSize: 11, height: 1.4),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildConfigField(aceitavelCtrl, '✅  Aceitável — limite em horas',
+                          _cyan, 'Problemas com menos de X horas são Aceitáveis'),
+                      const SizedBox(height: 12),
+                      _buildConfigField(ruimCtrl, '🟠  Ruim — limite em horas',
+                          const Color(0xFFFFA726), 'Entre Aceitável e este limite = Ruim'),
+                      const SizedBox(height: 12),
+                      _buildConfigField(criticoCtrl, '🔴  Crítico — limite em horas',
+                          const Color(0xFFFF4444), 'Acima do limite Ruim = Crítico'),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _cyan,
+                            foregroundColor: _bg,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: salvando
+                              ? null
+                              : () async {
+                                  if (!formKey.currentState!.validate()) return;
+                                  final a = int.parse(aceitavelCtrl.text.trim());
+                                  final r = int.parse(ruimCtrl.text.trim());
+                                  final c = int.parse(criticoCtrl.text.trim());
+                                  if (a >= r || r >= c) {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: const Text('Aceitável < Ruim < Crítico (em horas)'),
+                                      backgroundColor: const Color(0xFFFF6B6B),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                    ));
+                                    return;
+                                  }
+                                  setS(() => salvando = true);
+                                  try {
+                                    await ApiService.updateConfiguracoes(_token!, {
+                                      'nivel_aceitavel_horas': a,
+                                      'nivel_ruim_horas': r,
+                                      'nivel_critico_horas': c,
+                                    });
+                                    if (!mounted) return;
+                                    Navigator.pop(ctx);
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: const Text('Configurações salvas com sucesso!'),
+                                      backgroundColor: _cyan,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                    ));
+                                  } on ApiException catch (e) {
+                                    setS(() => salvando = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text(e.message),
+                                      backgroundColor: const Color(0xFFFF6B6B),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                    ));
+                                  } catch (_) {
+                                    setS(() => salvando = false);
+                                  }
+                                },
+                          child: salvando
+                              ? const SizedBox(
+                                  width: 18, height: 18,
+                                  child: CircularProgressIndicator(
+                                      color: Color(0xFF0A1929), strokeWidth: 2))
+                              : const Text('Salvar Configurações',
+                                  style: TextStyle(fontWeight: FontWeight.w700)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildConfigField(TextEditingController ctrl, String label, Color cor, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(
+            color: cor, fontSize: 12, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          style: const TextStyle(color: Color(0xFFE0F7F5), fontSize: 14),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: cor.withValues(alpha: 0.30), fontSize: 12),
+            filled: true,
+            fillColor: const Color(0xFF071520),
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            suffixText: 'h',
+            suffixStyle: TextStyle(color: cor.withValues(alpha: 0.6), fontWeight: FontWeight.w600),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: cor.withValues(alpha: 0.25)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: cor.withValues(alpha: 0.25)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: cor, width: 1.5),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: const Color(0xFFFF6B6B).withValues(alpha: 0.7)),
+            ),
+            errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
+          ),
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) return 'Campo obrigatório';
+            final n = int.tryParse(v.trim());
+            if (n == null || n <= 0) return 'Digite um número inteiro positivo';
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
   Future<void> _logout() async {
     showDialog(
       context: context,
@@ -285,6 +486,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             onPressed: _load,
             icon: const Icon(Icons.refresh_rounded, color: _cyan, size: 20),
             tooltip: 'Atualizar',
+          ),
+          IconButton(
+            onPressed: _abrirConfiguracoes,
+            icon: Icon(Icons.settings_outlined, color: _cyan.withValues(alpha: 0.85), size: 20),
+            tooltip: 'Configurações',
           ),
           IconButton(
             onPressed: _logout,

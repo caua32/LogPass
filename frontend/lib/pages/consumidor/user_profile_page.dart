@@ -293,7 +293,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           ),
           const SizedBox(width: 6),
           GestureDetector(
-            onTap: () => context.go('/chat/${r.id}', extra: {'titulo': r.titulo}),
+            onTap: () => context.push('/chat/${r.id}', extra: {'titulo': r.titulo}),
             child: Container(
               width: 32, height: 32,
               decoration: BoxDecoration(

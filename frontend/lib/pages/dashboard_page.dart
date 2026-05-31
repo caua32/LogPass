@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../core/particles_background.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -17,22 +18,34 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
   late AnimationController _headerCtrl;
   late AnimationController _logoCtrl;
+  late AnimationController _cardsCtrl;
+  late AnimationController _pulseCtrl;
   late Animation<double> _headerFade;
   late Animation<double> _logoScale;
 
   @override
   void initState() {
     super.initState();
+
     _headerCtrl = AnimationController(
         duration: const Duration(milliseconds: 380), vsync: this);
     _logoCtrl = AnimationController(
         duration: const Duration(milliseconds: 700), vsync: this);
+    _cardsCtrl = AnimationController(
+        duration: const Duration(milliseconds: 800), vsync: this);
+    _pulseCtrl = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this)
+      ..repeat(reverse: true);
+
     _headerFade = CurvedAnimation(parent: _headerCtrl, curve: Curves.easeOutQuart);
-    _logoScale =
-        CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOutBack);
+    _logoScale = CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOutBack);
+
     _headerCtrl.forward();
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) _logoCtrl.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 250), () {
+      if (mounted) _cardsCtrl.forward();
     });
   }
 
@@ -40,6 +53,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   void dispose() {
     _headerCtrl.dispose();
     _logoCtrl.dispose();
+    _cardsCtrl.dispose();
+    _pulseCtrl.dispose();
     super.dispose();
   }
 
@@ -51,30 +66,37 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 
     return Scaffold(
       backgroundColor: _bg,
-      body: Column(
+      body: Stack(
         children: [
-          FadeTransition(
-            opacity: _headerFade,
-            child: _buildHeader(nome, isEmpresa),
+          const Positioned.fill(
+            child: ParticlesBackground(count: 50, showLines: true),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 8),
-                  ScaleTransition(
-                    scale: _logoScale,
-                    child: _buildLogoSection(),
-                  ),
-                  const SizedBox(height: 32),
-                  _buildMenuGrid(isEmpresa),
-                  const SizedBox(height: 20),
-                  _buildTip(isEmpresa),
-                  const SizedBox(height: 20),
-                ],
+          Column(
+            children: [
+              FadeTransition(
+                opacity: _headerFade,
+                child: _buildHeader(nome, isEmpresa),
               ),
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      ScaleTransition(
+                        scale: _logoScale,
+                        child: _buildLogoSection(isEmpresa),
+                      ),
+                      const SizedBox(height: 32),
+                      _buildMenuGrid(isEmpresa),
+                      const SizedBox(height: 20),
+                      _buildTip(isEmpresa),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -192,119 +214,203 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     );
   }
 
-  Widget _buildLogoSection() {
-    return Container(
-      width: 76,
-      height: 76,
-      decoration: BoxDecoration(
-        color: _cyan.withValues(alpha: 0.12),
-        shape: BoxShape.circle,
-        border: Border.all(color: _cyan.withValues(alpha: 0.30), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: _cyan.withValues(alpha: 0.20),
-            blurRadius: 28,
-            spreadRadius: 4,
+  Widget _buildLogoSection(bool isEmpresa) {
+    final glowAnim = Tween<double>(begin: 0.20, end: 0.45).animate(
+      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
+    );
+
+    return AnimatedBuilder(
+      animation: glowAnim,
+      builder: (_, __) => Column(
+        children: [
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              color: _cyan.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+              border: Border.all(color: _cyan.withValues(alpha: 0.35), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: _cyan.withValues(alpha: glowAnim.value),
+                  blurRadius: 36,
+                  spreadRadius: 6,
+                ),
+              ],
+            ),
+            child: const Icon(Icons.computer, color: _cyan, size: 44),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'LogPass',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              color: _cyan,
+              letterSpacing: 2.5,
+              shadows: [Shadow(color: _cyan, blurRadius: 18)],
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Gerenciamento de Ocorrências',
+            style: TextStyle(
+              fontSize: 12,
+              color: _cyan.withValues(alpha: 0.55),
+              letterSpacing: 0.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            decoration: BoxDecoration(
+              color: _cyan.withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: _cyan.withValues(alpha: 0.18)),
+            ),
+            child: Text(
+              isEmpresa
+                  ? 'Painel de gerenciamento empresarial'
+                  : 'Seus direitos protegidos em um só lugar',
+              style: TextStyle(
+                fontSize: 11,
+                color: _cyan.withValues(alpha: 0.65),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
-      child: const Icon(Icons.computer, color: _cyan, size: 38),
     );
   }
 
   Widget _buildMenuGrid(bool isEmpresa) {
     final consumerItems = [
-      _MenuItem(Icons.assignment_outlined, 'Nova\nSolicitação', '/nova-reclamacao'),
-      _MenuItem(Icons.list_alt_outlined, 'Minhas\nSolicitações', '/minhas-reclamacoes'),
-      _MenuItem(Icons.star_outline_rounded, 'Avaliação\nde Satisfação', '/satisfacao'),
-      _MenuItem(Icons.person_outline, 'Meus\nDados', '/perfil/consumidor'),
+      _MenuItem(Icons.assignment_outlined, 'Nova Solicitação',
+          'Registre um produto danificado ou extraviado', '/nova-reclamacao'),
+      _MenuItem(Icons.list_alt_outlined, 'Minhas Solicitações',
+          'Acompanhe o status das suas ocorrências', '/minhas-reclamacoes'),
+      _MenuItem(Icons.star_outline_rounded, 'Avaliação de Satisfação',
+          'Avalie como foi a resolução do seu caso', '/satisfacao'),
+      _MenuItem(Icons.person_outline, 'Meus Dados',
+          'Visualize e atualize suas informações pessoais', '/perfil/consumidor'),
     ];
 
     final empresaItems = [
-      _MenuItem(Icons.inventory_2_outlined, 'Consultar\nDados', '/empresa/consulta'),
-      _MenuItem(Icons.notifications_outlined, 'Notificações\nProblemas', '/empresa/problemas'),
-      _MenuItem(Icons.person_outline, 'Perfil\nEmpresa', '/perfil/empresa'),
-      _MenuItem(Icons.analytics_outlined, 'Relatórios\ne Análises', '/empresa/relatorios'),
+      _MenuItem(Icons.inventory_2_outlined, 'Consultar Dados',
+          'Visualize todos os registros e dados', '/empresa/consulta'),
+      _MenuItem(Icons.notifications_outlined, 'Notificações Problemas',
+          'Reclamações pendentes dos clientes', '/empresa/problemas'),
+      _MenuItem(Icons.person_outline, 'Perfil Empresa',
+          'Gerencie as informações da sua empresa', '/perfil/empresa'),
+      _MenuItem(Icons.analytics_outlined, 'Relatórios e Análises',
+          'Métricas e relatórios detalhados', '/empresa/relatorios'),
     ];
 
     final items = isEmpresa ? empresaItems : consumerItems;
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: items.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 1.55,
+    return Column(
+      children: List.generate(
+        items.length,
+        (i) => Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: _buildMenuCard(items[i], i),
+        ),
       ),
-      itemBuilder: (_, i) => _buildMenuCard(items[i], i),
     );
   }
 
   Widget _buildMenuCard(_MenuItem item, int index) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 350 + index * 60),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOutQuart,
-      builder: (_, value, __) => Transform.scale(
-        scale: 0.88 + 0.12 * value,
-        child: Opacity(
-          opacity: value.clamp(0.0, 1.0),
-          child: Semantics(
-            button: true,
-            label: item.label.replaceAll('\n', ' '),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => context.push(item.route),
-                borderRadius: BorderRadius.circular(16),
-                splashColor: _cyan.withValues(alpha: 0.12),
-                highlightColor: _cyan.withValues(alpha: 0.06),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: _card,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: _cyan.withValues(alpha: 0.18)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+    final start = index * 0.15;
+    final end = (start + 0.55).clamp(0.0, 1.0);
+
+    final fade = CurvedAnimation(
+      parent: _cardsCtrl,
+      curve: Interval(start, end, curve: Curves.easeOut),
+    );
+    final slide = Tween<Offset>(
+      begin: const Offset(0, 0.18),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _cardsCtrl,
+      curve: Interval(start, end, curve: Curves.easeOutQuart),
+    ));
+
+    return FadeTransition(
+      opacity: fade,
+      child: SlideTransition(
+        position: slide,
+        child: Semantics(
+          button: true,
+          label: item.label,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.push(item.route),
+              borderRadius: BorderRadius.circular(16),
+              splashColor: _cyan.withValues(alpha: 0.12),
+              highlightColor: _cyan.withValues(alpha: 0.06),
+              child: Ink(
+                decoration: BoxDecoration(
+                  color: _card,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _cyan.withValues(alpha: 0.18)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: _cyan.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: _cyan.withValues(alpha: 0.25)),
+                        ),
+                        child: Icon(item.icon, color: _cyan, size: 24),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.label,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFCCEEEC),
+                                height: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item.description,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _cyan.withValues(alpha: 0.55),
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: _cyan.withValues(alpha: 0.40),
                       ),
                     ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: _cyan.withValues(alpha: 0.10),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _cyan.withValues(alpha: 0.25)),
-                          ),
-                          child: Icon(item.icon, color: _cyan, size: 22),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            item.label.replaceAll('\n', ' '),
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFFCCEEEC),
-                              height: 1.3,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -316,37 +422,81 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   }
 
   Widget _buildTip(bool isEmpresa) {
+    final title = isEmpresa ? 'Dica para Empresas' : 'Dica para Consumidores';
+    final body = isEmpresa
+        ? 'Verifique as notificações regularmente para manter a satisfação dos clientes.'
+        : 'Use Nova Solicitação sempre que precisar registrar um problema com um produto.';
+    final extra = isEmpresa
+        ? 'Resolva ocorrências em até 48h para melhorar sua avaliação.'
+        : 'Acompanhe o status em Minhas Solicitações e avalie após a resolução.';
+
     return TweenAnimationBuilder<double>(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 900),
       tween: Tween(begin: 0, end: 1),
       curve: Curves.easeOut,
       builder: (_, value, __) => Opacity(
         opacity: value,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: _card.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: _cyan.withValues(alpha: 0.12)),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: _cyan.withValues(alpha: 0.15)),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.lightbulb_outline_rounded,
-                  color: _cyan.withValues(alpha: 0.6), size: 18),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  isEmpresa
-                      ? 'Verifique as notificações regularmente para manter a satisfação dos clientes.'
-                      : 'Use Nova Solicitação sempre que precisar registrar um problema com um produto.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: _cyan.withValues(alpha: 0.70),
-                    fontStyle: FontStyle.italic,
-                    height: 1.5,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: _cyan.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.lightbulb_outline_rounded,
+                        color: _cyan, size: 16),
                   ),
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFCCEEEC),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                body,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: _cyan.withValues(alpha: 0.70),
+                  fontStyle: FontStyle.italic,
+                  height: 1.5,
                 ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.arrow_right,
+                      color: _cyan.withValues(alpha: 0.45), size: 16),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      extra,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _cyan.withValues(alpha: 0.50),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -359,6 +509,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
 class _MenuItem {
   final IconData icon;
   final String label;
+  final String description;
   final String route;
-  const _MenuItem(this.icon, this.label, this.route);
+  const _MenuItem(this.icon, this.label, this.description, this.route);
 }
