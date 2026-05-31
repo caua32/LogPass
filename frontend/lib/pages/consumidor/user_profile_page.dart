@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
-import '../../models/reclamacao_model.dart';
 import '../../core/app_header.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -20,7 +19,6 @@ class _UserProfilePageState extends State<UserProfilePage>
   final _emailCtrl = TextEditingController();
   final _telefoneCtrl = TextEditingController();
   final _cpfCtrl = TextEditingController();
-  List<Reclamacao> _reclamacoes = [];
   bool _loading = true;
   bool _saving = false;
   String? _error;
@@ -54,16 +52,12 @@ class _UserProfilePageState extends State<UserProfilePage>
     final token = context.read<AuthProvider>().token!;
     try {
       final perfil = await ApiService.getConsumidorPerfil(token);
-      final lista = await ApiService.getReclamacoesConsumidor(token);
       final c = perfil['consumidor'] as Map<String, dynamic>;
       setState(() {
         _nomeCtrl.text = c['nome'] ?? '';
         _emailCtrl.text = c['email'] ?? '';
         _telefoneCtrl.text = c['telefone'] ?? '';
         _cpfCtrl.text = c['cpf'] ?? '';
-        _reclamacoes = lista
-            .map((e) => Reclamacao.fromJson(e as Map<String, dynamic>))
-            .toList();
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -171,10 +165,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                                 _buildField(_telefoneCtrl, 'Telefone', Icons.phone_outlined),
                               ],
                             ),
-                            if (_reclamacoes.isNotEmpty) ...[
-                              const SizedBox(height: 16),
-                              _buildReclamacoes(),
-                            ],
+                            const SizedBox(height: 16),
+                            _buildAtalhoSolicitacoes(),
                             const SizedBox(height: 20),
                             _buildBotoes(),
                             const SizedBox(height: 20),
@@ -247,67 +239,38 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  Widget _buildReclamacoes() {
+  Widget _buildAtalhoSolicitacoes() {
     return SectionCard(
-      title: 'Minhas Reclamações',
-      titleIcon: Icons.assignment_outlined,
-      children: _reclamacoes.map((r) => Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0A1929).withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: r.statusColor.withValues(alpha: 0.4)),
+      title: 'Minhas Solicitações',
+      titleIcon: Icons.list_alt_outlined,
+      children: [
+        Text(
+          'Veja o histórico e acompanhe o status das suas solicitações abertas.',
+          style: TextStyle(
+            color: const Color(0xFF44CABD).withValues(alpha: 0.65),
+            fontSize: 12,
+            height: 1.5,
+          ),
         ),
-        child: Row(children: [
-          Container(
-            width: 4, height: 40,
-            decoration: BoxDecoration(
-              color: r.statusColor,
-              borderRadius: BorderRadius.circular(2),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => context.push('/minhas-reclamacoes'),
+            icon: const Icon(Icons.arrow_forward_ios, size: 13),
+            label: const Text('Ver Minhas Solicitações',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF44CABD),
+              side: BorderSide(
+                  color: const Color(0xFF44CABD).withValues(alpha: 0.40)),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(r.titulo, style: const TextStyle(
-              color: Color(0xFF44CABD), fontWeight: FontWeight.w600, fontSize: 13,
-            )),
-            const SizedBox(height: 2),
-            Text(r.descricao, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: const Color(0xFF44CABD).withValues(alpha: 0.6),
-                  fontSize: 11,
-                )),
-          ])),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: r.statusColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: r.statusColor.withValues(alpha: 0.4)),
-            ),
-            child: Text(r.statusNome, style: TextStyle(
-              color: r.statusColor, fontSize: 10, fontWeight: FontWeight.bold,
-            )),
-          ),
-          const SizedBox(width: 6),
-          GestureDetector(
-            onTap: () => context.push('/chat/${r.id}', extra: {'titulo': r.titulo}),
-            child: Container(
-              width: 32, height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFF44CABD).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                    color: const Color(0xFF44CABD).withValues(alpha: 0.35)),
-              ),
-              child: const Icon(Icons.chat_bubble_outline,
-                  color: Color(0xFF44CABD), size: 16),
-            ),
-          ),
-        ]),
-      )).toList(),
+        ),
+      ],
     );
   }
 

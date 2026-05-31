@@ -70,7 +70,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
       } catch (_) { /* endpoint não deployado ainda — mantém defaults */ }
 
       setState(() {
-        _abertas = todas.where((r) => r.idStatus == 1 || r.idStatus == 2).toList();
+        _abertas = todas;
         _config = config;
         _loading = false;
       });
@@ -147,7 +147,7 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
           child: Column(children: [
             AppHeader(
               title: 'Notificações de Problemas',
-              subtitle: 'Histórico por nível de severidade',
+              subtitle: 'Histórico completo por nível de severidade',
               icon: Icons.warning_amber_outlined,
               actions: [
                 IconButton(
@@ -202,11 +202,11 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
           child: const Icon(Icons.check_circle_outline, size: 42, color: _cyan),
         ),
         const SizedBox(height: 16),
-        const Text('Tudo em dia!', style: TextStyle(
+        const Text('Sem reclamações', style: TextStyle(
           fontSize: 18, fontWeight: FontWeight.bold, color: _cyan,
         )),
         const SizedBox(height: 6),
-        Text('Nenhum alerta pendente no momento.', style: TextStyle(
+        Text('Nenhuma reclamação registrada para esta empresa.', style: TextStyle(
           fontSize: 13, color: _cyan.withValues(alpha: 0.6),
         )),
       ],
@@ -401,28 +401,20 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
         decoration: BoxDecoration(
           color: _bg,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: corNivel.withValues(alpha: 0.20)),
+          border: Border(
+            left:   BorderSide(color: corNivel, width: 4),
+            top:    BorderSide(color: corNivel.withValues(alpha: 0.20)),
+            right:  BorderSide(color: corNivel.withValues(alpha: 0.20)),
+            bottom: BorderSide(color: corNivel.withValues(alpha: 0.20)),
+          ),
           boxShadow: [BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 6, offset: const Offset(0, 3),
           )],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              width: 4,
-              decoration: BoxDecoration(
-                color: corNivel,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12), bottomLeft: Radius.circular(12),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(
                       child: Text(r.titulo, style: const TextStyle(
@@ -491,11 +483,8 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
                     ),
                   ]),
                 ]),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
     );
   }
 }

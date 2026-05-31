@@ -53,7 +53,7 @@ class Reclamacao {
     final raw = json['status_id'] ?? json['id_status'] ?? json['status'];
     if (raw is int) return raw;
     if (raw is String) {
-      const map = {'Pendente': 1, 'Em Anlise': 2, 'Resolvida': 3, 'No Resolvida': 4};
+      const map = {'Pendente': 1, 'Em Análise': 2, 'Resolvida': 3, 'Não Resolvida': 4};
       return map[raw] ?? 1;
     }
     return 1;
