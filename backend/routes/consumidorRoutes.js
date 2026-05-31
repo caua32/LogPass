@@ -18,7 +18,8 @@ const addConsumidorRules = [
 router.post('/add-consumidor', verifyToken, requireConsumidor, addConsumidorRules, validate, consumidorController.addConsumidor);
 
 // Buscar perfil do consumidor logado
-router.get('/consumidor/perfil', verifyToken, requireConsumidor, consumidorController.getPerfil);
+router.get('/consumidor/perfil',         verifyToken, requireConsumidor, consumidorController.getPerfil);
+router.get('/consumidor/configuracoes',  verifyToken, requireConsumidor, consumidorController.getConfiguracoes);
 
 const updatePerfilRules = [
   body('nome').trim().notEmpty().withMessage('Nome é obrigatório.'),

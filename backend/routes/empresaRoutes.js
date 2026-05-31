@@ -29,6 +29,7 @@ const updateEmpresaRules = [
   body('cep').optional().trim(),
 ];
 
+router.get('/empresa/configuracoes', verifyToken, requireEmpresa, empresaController.getConfiguracoes);
 router.post('/add-empresa', verifyToken, requireEmpresa, addEmpresaRules, validate, empresaController.addEmpresa);
 
 // Buscar perfil da empresa logada

@@ -80,6 +80,60 @@ exports.getByConsumidor = async (req, res) => {
   }
 };
 
+exports.editarReclamacaoConsumidor = async (req, res) => {
+  const { id } = req.params;
+  const { numero_pedido, motivo, forma_solucao } = req.body;
+
+  if (!numero_pedido || !motivo || motivo.trim().length < 10) {
+    return res.status(400).json({ message: 'Dados inválidos. Motivo deve ter no mínimo 10 caracteres.' });
+  }
+
+  try {
+    const check = await pool.query(
+      `SELECT r.status_id FROM reclamacao r
+       JOIN consumidor c ON c.id = r.consumidor_id
+       WHERE r.id = $1 AND c.usuario_id = $2`,
+      [id, req.user.id]
+    );
+    if (check.rows.length === 0)
+      return res.status(404).json({ message: 'Reclamação não encontrada.' });
+    if (check.rows[0].status_id !== 1)
+      return res.status(403).json({ message: 'Só é possível editar reclamações com status Pendente.' });
+
+    await pool.query(
+      `UPDATE reclamacao SET numero_pedido=$1, motivo=$2, forma_solucao=$3 WHERE id=$4`,
+      [numero_pedido.trim(), motivo.trim(), forma_solucao || 'Não Informado', id]
+    );
+    res.json({ message: 'Reclamação atualizada com sucesso.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao editar reclamação.' });
+  }
+};
+
+exports.deletarReclamacaoConsumidor = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const check = await pool.query(
+      `SELECT r.status_id FROM reclamacao r
+       JOIN consumidor c ON c.id = r.consumidor_id
+       WHERE r.id = $1 AND c.usuario_id = $2`,
+      [id, req.user.id]
+    );
+    if (check.rows.length === 0)
+      return res.status(404).json({ message: 'Reclamação não encontrada.' });
+    if (check.rows[0].status_id !== 1)
+      return res.status(403).json({ message: 'Só é possível excluir reclamações com status Pendente.' });
+
+    await pool.query(`DELETE FROM reclamacao WHERE id = $1`, [id]);
+    res.json({ message: 'Reclamação excluída com sucesso.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao excluir reclamação.' });
+  }
+};
+
 exports.updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status_id } = req.body;

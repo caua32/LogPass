@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const reclamacaoController = require('../controllers/reclamacaoController');
+const {
+  editarReclamacaoConsumidor,
+  deletarReclamacaoConsumidor,
+} = reclamacaoController;
 const verifyToken = require('../middleware/verifyToken');
 const validate = require('../middleware/validate');
 const requireAdmin = require('../middleware/requireAdmin');
@@ -20,5 +24,7 @@ router.post('/reclamacao', verifyToken, requireConsumidor, criarRules, validate,
 router.get('/reclamacao/empresa', verifyToken, requireEmpresa, reclamacaoController.getByEmpresa);
 router.get('/reclamacao/consumidor', verifyToken, requireConsumidor, reclamacaoController.getByConsumidor);
 router.put('/reclamacao/:id/status', verifyToken, requireAdmin, reclamacaoController.updateStatus);
+router.put('/reclamacao/:id',        verifyToken, requireConsumidor, editarReclamacaoConsumidor);
+router.delete('/reclamacao/:id',     verifyToken, requireConsumidor, deletarReclamacaoConsumidor);
 
 module.exports = router;

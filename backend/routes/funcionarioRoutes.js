@@ -12,6 +12,8 @@ const loginRules = [
 ];
 
 router.post('/admin/login', loginRules, validate, funcionarioController.loginFuncionario);
-router.get('/admin/reclamacoes', verifyToken, requireAdmin, funcionarioController.getTodasReclamacoes);
+router.get('/admin/reclamacoes',    verifyToken, requireAdmin, funcionarioController.getTodasReclamacoes);
+router.get('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioController.getConfiguracoes);
+router.put('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioController.updateConfiguracoes);
 
 module.exports = router;

@@ -41,6 +41,18 @@ exports.getPerfil = async (req, res) => {
   }
 };
 
+exports.getConfiguracoes = async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT chave, valor FROM configuracao_sistema`);
+    const config = {};
+    result.rows.forEach(r => { config[r.chave] = Number(r.valor); });
+    res.json({ configuracoes: config });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar configurações.' });
+  }
+};
+
 exports.updatePerfil = async (req, res) => {
   const { nome, email, telefone } = req.body;
   const client = await pool.connect();

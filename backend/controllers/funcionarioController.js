@@ -23,6 +23,43 @@ exports.getTodasReclamacoes = async (req, res) => {
   }
 };
 
+exports.getConfiguracoes = async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT chave, valor FROM configuracao_sistema`);
+    const config = {};
+    result.rows.forEach(r => { config[r.chave] = Number(r.valor); });
+    res.json({ configuracoes: config });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar configurações.' });
+  }
+};
+
+exports.updateConfiguracoes = async (req, res) => {
+  const { nivel_aceitavel_horas, nivel_ruim_horas, nivel_critico_horas } = req.body;
+
+  const a = Number(nivel_aceitavel_horas);
+  const r = Number(nivel_ruim_horas);
+  const c = Number(nivel_critico_horas);
+
+  if (!Number.isInteger(a) || !Number.isInteger(r) || !Number.isInteger(c) ||
+      a <= 0 || r <= 0 || c <= 0 || a >= r || r >= c) {
+    return res.status(400).json({
+      message: 'Valores inválidos. Garanta que Aceitável < Ruim < Crítico e todos positivos.'
+    });
+  }
+
+  try {
+    await pool.query(`UPDATE configuracao_sistema SET valor=$1 WHERE chave='nivel_aceitavel_horas'`, [a]);
+    await pool.query(`UPDATE configuracao_sistema SET valor=$1 WHERE chave='nivel_ruim_horas'`, [r]);
+    await pool.query(`UPDATE configuracao_sistema SET valor=$1 WHERE chave='nivel_critico_horas'`, [c]);
+    res.json({ message: 'Configurações atualizadas com sucesso.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao atualizar configurações.' });
+  }
+};
+
 exports.loginFuncionario = async (req, res) => {
   const { email, senha } = req.body;
 
