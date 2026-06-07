@@ -65,7 +65,7 @@ exports.getByConsumidor = async (req, res) => {
 
     const result = await pool.query(
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
-              r.status_id, r.avaliacao,
+              r.status_id, r.avaliacao, r.comentario,
               s.descricao AS status, e.nomeempresa
        FROM reclamacao r
        JOIN status_reclamacao s ON s.id = r.status_id
@@ -166,10 +166,13 @@ exports.updateStatus = async (req, res) => {
 
 exports.avaliarReclamacao = async (req, res) => {
   const { id } = req.params;
-  const { nota } = req.body;
+  const { nota, comentario } = req.body;
 
   if (!nota || ![1, 2, 3, 4, 5].includes(Number(nota))) {
     return res.status(400).json({ message: 'Nota inválida. Use um valor entre 1 e 5.' });
+  }
+  if (!comentario || comentario.trim().length < 20) {
+    return res.status(400).json({ message: 'Feedback obrigatório (mínimo 20 caracteres).' });
   }
 
   try {
@@ -185,8 +188,8 @@ exports.avaliarReclamacao = async (req, res) => {
       return res.status(403).json({ message: 'Só é possível avaliar reclamações concluídas (Resolvida ou Não Resolvida).' });
 
     await pool.query(
-      `UPDATE reclamacao SET avaliacao = $1 WHERE id = $2`,
-      [Number(nota), id]
+      `UPDATE reclamacao SET avaliacao = $1, comentario = $2 WHERE id = $3`,
+      [Number(nota), comentario.trim(), id]
     );
     res.json({ message: 'Avaliação registrada com sucesso.' });
   } catch (err) {
