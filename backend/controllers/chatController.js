@@ -56,6 +56,48 @@ exports.getMensagens = async (req, res) => {
   }
 };
 
+exports.getNotificacoes = async (req, res) => {
+  const usuarioId = req.user.id;
+  const tipo = req.user.tipo;
+
+  try {
+    let result;
+
+    if (tipo === 'consumidor') {
+      result = await pool.query(
+        `SELECT DISTINCT ON (m.reclamacao_id)
+            m.reclamacao_id, r.numero_pedido, m.mensagem, m.remetente_tipo, m.created_at
+         FROM mensagem_chat m
+         JOIN reclamacao r ON r.id = m.reclamacao_id
+         JOIN consumidor c ON c.id = r.consumidor_id
+         WHERE c.usuario_id = $1
+           AND m.remetente_tipo != 'consumidor'
+         ORDER BY m.reclamacao_id, m.created_at DESC`,
+        [usuarioId]
+      );
+    } else if (tipo === 'empresa') {
+      result = await pool.query(
+        `SELECT DISTINCT ON (m.reclamacao_id)
+            m.reclamacao_id, r.numero_pedido, m.mensagem, m.remetente_tipo, m.created_at
+         FROM mensagem_chat m
+         JOIN reclamacao r ON r.id = m.reclamacao_id
+         JOIN empresa e ON e.id = r.empresa_id
+         WHERE e.usuario_id = $1
+           AND m.remetente_tipo != 'empresa'
+         ORDER BY m.reclamacao_id, m.created_at DESC`,
+        [usuarioId]
+      );
+    } else {
+      return res.json({ notificacoes: [] });
+    }
+
+    res.json({ notificacoes: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar notificações.' });
+  }
+};
+
 exports.enviarMensagem = async (req, res) => {
   const { reclamacao_id } = req.params;
   const { mensagem } = req.body;
