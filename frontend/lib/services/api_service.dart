@@ -18,27 +18,37 @@ class ApiService {
       };
 
   static Map<String, dynamic> _decode(http.Response res) {
-    final body = jsonDecode(res.body);
+    dynamic body;
+    try {
+      body = jsonDecode(res.body);
+    } catch (_) {
+      throw ApiException('Erro de comunicação com o servidor (${res.statusCode})');
+    }
     if (res.statusCode < 200 || res.statusCode >= 300) {
       if (body is Map) {
         throw ApiException(body['message'] ?? body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
       }
       throw ApiException('Erro ${res.statusCode}');
     }
-    return body as Map<String, dynamic>;
+    if (body is! Map<String, dynamic>) {
+      throw ApiException('Resposta inesperada do servidor');
+    }
+    return body;
   }
 
   static List<dynamic> _decodeList(http.Response res) {
-    if (res.statusCode < 200 || res.statusCode >= 300) {
-      try {
-        final body = jsonDecode(res.body) as Map<String, dynamic>;
-        throw ApiException(body['message'] ?? body['mensagem'] ?? body['erro'] ?? 'Erro ${res.statusCode}');
-      } catch (e) {
-        if (e is ApiException) rethrow;
-        throw ApiException('Erro ${res.statusCode}');
-      }
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(res.body);
+    } catch (_) {
+      throw ApiException('Erro de comunicação com o servidor (${res.statusCode})');
     }
-    final decoded = jsonDecode(res.body);
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      if (decoded is Map) {
+        throw ApiException(decoded['message'] ?? decoded['mensagem'] ?? decoded['erro'] ?? 'Erro ${res.statusCode}');
+      }
+      throw ApiException('Erro ${res.statusCode}');
+    }
     if (decoded is List) return decoded;
     if (decoded is Map) {
       for (final key in ['reclamacoes', 'data', 'items']) {

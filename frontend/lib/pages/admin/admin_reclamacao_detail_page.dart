@@ -133,6 +133,14 @@ class _AdminReclamacaoDetailPageState
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ));
       }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Erro ao alterar status. Tente novamente.'),
+          backgroundColor: Color(0xFFFF6B6B),
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
     }
   }
 

@@ -85,6 +85,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   }
 
   Future<void> _updateStatus(Reclamacao r, int novoStatus) async {
+    if (_token == null) return;
     try {
       await ApiService.updateReclamacaoStatus(_token!, r.id, novoStatus);
       await _load();
@@ -107,6 +108,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           backgroundColor: const Color(0xFFFF6B6B),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Erro ao atualizar status. Tente novamente.'),
+          backgroundColor: Color(0xFFFF6B6B),
+          behavior: SnackBarBehavior.floating,
         ));
       }
     }
