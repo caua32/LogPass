@@ -83,9 +83,11 @@ class _ProblemsNotificationPageState extends State<ProblemsNotificationPage>
   }
 
   String _nivelSeveridade(Reclamacao r) {
-    if (r.createdAt == null) return 'aceitavel';
+    // Se a empresa já respondeu, o relógio reseta a partir da última resposta
+    final ref = r.ultimaRespostaEmpresa ?? r.createdAt;
+    if (ref == null) return 'aceitavel';
     try {
-      final horas = DateTime.now().difference(DateTime.parse(r.createdAt!)).inHours;
+      final horas = DateTime.now().difference(DateTime.parse(ref)).inHours;
       final limAceitavel = _config['nivel_aceitavel_horas'] ?? 24;
       final limRuim = _config['nivel_ruim_horas'] ?? 48;
       if (horas <= limAceitavel) return 'aceitavel';

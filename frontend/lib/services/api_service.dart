@@ -203,6 +203,16 @@ class ApiService {
     _decode(res);
   }
 
+  static Future<void> avaliarReclamacao(
+      String token, int id, int nota, String comentario) async {
+    final res = await http
+        .post(Uri.parse('$kBaseUrl/reclamacao/$id/avaliacao'),
+            headers: _headers(token: token),
+            body: jsonEncode({'nota': nota, 'comentario': comentario}))
+        .timeout(_timeout);
+    _decode(res);
+  }
+
   // Admin
   static Future<Map<String, dynamic>> adminLogin(String email, String senha) async {
     final res = await http
@@ -246,6 +256,15 @@ class ApiService {
   }
 
   // Chat
+  static Future<List<dynamic>> getChatNotificacoes(String token) async {
+    final res = await http
+        .get(Uri.parse('$kBaseUrl/chat/notificacoes'),
+            headers: _headers(token: token))
+        .timeout(_timeout);
+    final body = _decode(res);
+    return body['notificacoes'] as List<dynamic>? ?? [];
+  }
+
   static Future<List<dynamic>> getMensagensChat(String token, int reclamacaoId) async {
     final res = await http
         .get(Uri.parse('$kBaseUrl/chat/$reclamacaoId'), headers: _headers(token: token))

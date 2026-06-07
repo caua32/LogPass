@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -183,11 +184,19 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                     children: [
                       TextFormField(
                         controller: _cnpjCtrl,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          _CnpjInputFormatter(),
+                        ],
                         style: const TextStyle(color: Color(0xFFE8F8F7), fontSize: 14),
                         decoration: appInputDeco('00.000.000/0000-00'),
-                        validator: (v) => (v == null || v.isEmpty)
-                            ? 'Informe o CNPJ da empresa' : null,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Informe o CNPJ da empresa';
+                          final digits = v.replaceAll(RegExp(r'\D'), '');
+                          if (digits.length != 14) return 'CNPJ incompleto (14 dígitos)';
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -296,6 +305,26 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
           )),
         ]),
       ),
+    );
+  }
+}
+
+class _CnpjInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    final buf = StringBuffer();
+    for (int i = 0; i < digits.length && i < 14; i++) {
+      if (i == 2 || i == 5) buf.write('.');
+      if (i == 8) buf.write('/');
+      if (i == 12) buf.write('-');
+      buf.write(digits[i]);
+    }
+    final formatted = buf.toString();
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

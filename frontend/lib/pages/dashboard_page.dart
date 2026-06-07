@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../core/particles_background.dart';
+import '../widgets/chat_notification_bell.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -75,7 +76,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
             children: [
               FadeTransition(
                 opacity: _headerFade,
-                child: _buildHeader(nome, isEmpresa),
+                child: _buildHeader(nome, isEmpresa, auth.token ?? ''),
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -103,9 +104,9 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     );
   }
 
-  Widget _buildHeader(String nome, bool isEmpresa) {
+  Widget _buildHeader(String nome, bool isEmpresa, String token) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 52, 20, 20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -124,90 +125,99 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Logo
           Container(
-            width: 44,
-            height: 44,
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
               color: _cyan,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
                   color: _cyan.withValues(alpha: 0.45),
-                  blurRadius: 14,
+                  blurRadius: 16,
                   spreadRadius: 1,
                 ),
               ],
             ),
-            child: const Icon(Icons.computer, color: _bg, size: 24),
+            child: const Icon(Icons.computer, color: _bg, size: 30),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
+
+          // Texto: LogPass / Olá nome / badge
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   'LogPass',
                   style: TextStyle(
-                    fontSize: 19,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: _cyan,
                     letterSpacing: 1.5,
                   ),
                 ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'Olá, $nome',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: _cyan.withValues(alpha: 0.65),
-                        ),
-                      ),
+                const SizedBox(height: 3),
+                Text(
+                  'Olá, $nome',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: _cyan.withValues(alpha: 0.65),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: _cyan.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: _cyan.withValues(alpha: 0.25)),
+                  ),
+                  child: Text(
+                    isEmpresa ? 'Empresa' : 'Consumidor',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: _cyan,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: _cyan.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: _cyan.withValues(alpha: 0.25)),
-                      ),
-                      child: Text(
-                        isEmpresa ? 'Empresa' : 'Consumidor',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: _cyan,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-          TextButton.icon(
-            onPressed: () async => context.read<AuthProvider>().logout(),
-            icon: const Icon(Icons.logout_rounded, size: 15, color: _cyan),
-            label: const Text(
-              'Sair',
-              style: TextStyle(
-                color: _cyan,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+          const SizedBox(width: 12),
+
+          // Bell + Sair lado a lado
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (token.isNotEmpty) ...[
+                ChatNotificationBell(token: token),
+                const SizedBox(width: 8),
+              ],
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: _cyan.withValues(alpha: 0.25)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: IconButton(
+                  onPressed: () async =>
+                      context.read<AuthProvider>().logout(),
+                  icon: const Icon(Icons.logout_rounded,
+                      color: _cyan, size: 20),
+                  tooltip: 'Sair',
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
+                ),
               ),
-            ),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: _cyan.withValues(alpha: 0.25)),
-              ),
-            ),
+            ],
           ),
         ],
       ),

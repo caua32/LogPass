@@ -9,6 +9,9 @@ class Reclamacao {
   final String? nomeEmpresa;
   final String? nomeConsumidor;
   final String? createdAt;
+  final int? avaliacao;
+  final String? comentario;
+  final String? ultimaRespostaEmpresa;
 
   const Reclamacao({
     required this.id,
@@ -18,6 +21,9 @@ class Reclamacao {
     this.nomeEmpresa,
     this.nomeConsumidor,
     this.createdAt,
+    this.avaliacao,
+    this.comentario,
+    this.ultimaRespostaEmpresa,
   });
 
   String get statusNome => kStatusNomes[idStatus] ?? 'Desconhecido';
@@ -46,6 +52,9 @@ class Reclamacao {
       nomeEmpresa: json['nomeempresa'] ?? json['nome_empresa'] ?? json['empresa'],
       nomeConsumidor: json['consumidor_nome'] ?? json['nome_consumidor'] ?? json['consumidor'],
       createdAt: (json['data_abertura'] ?? json['created_at'])?.toString(),
+      avaliacao: json['avaliacao'] as int?,
+      comentario: json['comentario'] as String?,
+      ultimaRespostaEmpresa: json['ultima_resposta_empresa']?.toString(),
     );
   }
 

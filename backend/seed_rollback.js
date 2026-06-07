@@ -3,58 +3,31 @@ const { Pool } = require('pg');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-const SEED_PEDIDOS = [
-  'TS-2024-001',
-  'TS-2024-002',
-  'TS-2024-003',
-  'TS-2024-004',
-  'TS-2024-005',
-];
-
-const SEED_FUNCIONARIOS = [
-  'ana@techstore.com',
-  'carlos@techstore.com',
-  'mariana@techstore.com',
-];
-
 async function rollback() {
   const client = await pool.connect();
   try {
-    console.log('🔄 Iniciando rollback do seed...\n');
+    console.log('🔄 Iniciando rollback — mantendo apenas usuários...\n');
 
-    // ─── 1. Reclamações + mensagens (cascade automático) ────────────────────
-    const delRec = await client.query(
-      `DELETE FROM reclamacao
-       WHERE numero_pedido = ANY($1::text[])`,
-      [SEED_PEDIDOS]
-    );
-    console.log(`✅ [1/4] ${delRec.rowCount} reclamações removidas (mensagens apagadas em cascade)`);
+    // ─── 1. Mensagens de chat ─────────────────────────────────────────────────
+    const delMsg = await client.query(`DELETE FROM mensagem_chat`);
+    console.log(`✅ [1/4] ${delMsg.rowCount} mensagens de chat removidas`);
 
-    // ─── 2. Permissões dos funcionários seed ─────────────────────────────────
-    const delPerm = await client.query(
-      `DELETE FROM permissao_funcionario
-       WHERE funcionario_id IN (
-         SELECT id FROM funcionario WHERE email = ANY($1::text[])
-       )`,
-      [SEED_FUNCIONARIOS]
-    );
-    console.log(`✅ [2/4] ${delPerm.rowCount} permissões removidas`);
+    // ─── 2. Reclamações ───────────────────────────────────────────────────────
+    const delRec = await client.query(`DELETE FROM reclamacao`);
+    console.log(`✅ [2/4] ${delRec.rowCount} reclamações removidas`);
 
-    // ─── 3. Funcionários seed ────────────────────────────────────────────────
-    const delFunc = await client.query(
-      `DELETE FROM funcionario
-       WHERE email = ANY($1::text[])`,
-      [SEED_FUNCIONARIOS]
-    );
-    console.log(`✅ [3/4] ${delFunc.rowCount} funcionários removidos`);
+    // ─── 3. Funcionários + permissões ─────────────────────────────────────────
+    const delPerm = await client.query(`DELETE FROM permissao_funcionario`);
+    const delFunc = await client.query(`DELETE FROM funcionario`);
+    console.log(`✅ [3/4] ${delFunc.rowCount} funcionários e ${delPerm.rowCount} permissões removidos`);
 
-    // ─── 4. Configurações do sistema ─────────────────────────────────────────
+    // ─── 4. Configurações do sistema ──────────────────────────────────────────
     const delCfg = await client.query(`DELETE FROM configuracao_sistema`);
     console.log(`✅ [4/4] ${delCfg.rowCount} configurações removidas`);
 
-    console.log('\n🎉 Rollback concluído! Banco voltou ao estado pré-seed.');
-    console.log('   Personas base intactas: João Silva, Tech Store, Administrador.');
-    console.log('   Obs: hash do admin foi mantido corrigido (123456).\n');
+    console.log('\n🎉 Rollback concluído!');
+    console.log('   Mantidos: usuario, consumidor, empresa (todos os cadastros).');
+    console.log('   Removidos: reclamações, mensagens, funcionários, configurações.\n');
 
   } catch (err) {
     console.error('❌ Erro durante o rollback:', err.message);

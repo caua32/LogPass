@@ -40,7 +40,11 @@ exports.getByEmpresa = async (req, res) => {
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
               r.status_id,
               s.descricao AS status,
-              c.nome AS consumidor_nome, c.email AS consumidor_email
+              c.nome AS consumidor_nome, c.email AS consumidor_email,
+              (SELECT MAX(m.created_at)
+               FROM mensagem_chat m
+               WHERE m.reclamacao_id = r.id
+                 AND m.remetente_tipo = 'empresa') AS ultima_resposta_empresa
        FROM reclamacao r
        JOIN status_reclamacao s ON s.id = r.status_id
        LEFT JOIN consumidor c ON c.id = r.consumidor_id
