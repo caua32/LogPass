@@ -65,7 +65,7 @@ exports.getByConsumidor = async (req, res) => {
 
     const result = await pool.query(
       `SELECT r.id, r.numero_pedido, r.motivo, r.forma_solucao, r.data_abertura, r.data_resolucao,
-              r.status_id,
+              r.status_id, r.avaliacao,
               s.descricao AS status, e.nomeempresa
        FROM reclamacao r
        JOIN status_reclamacao s ON s.id = r.status_id
@@ -161,5 +161,36 @@ exports.updateStatus = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erro ao atualizar status.' });
+  }
+};
+
+exports.avaliarReclamacao = async (req, res) => {
+  const { id } = req.params;
+  const { nota } = req.body;
+
+  if (!nota || ![1, 2, 3, 4, 5].includes(Number(nota))) {
+    return res.status(400).json({ message: 'Nota inválida. Use um valor entre 1 e 5.' });
+  }
+
+  try {
+    const check = await pool.query(
+      `SELECT r.status_id FROM reclamacao r
+       JOIN consumidor c ON c.id = r.consumidor_id
+       WHERE r.id = $1 AND c.usuario_id = $2`,
+      [id, req.user.id]
+    );
+    if (check.rows.length === 0)
+      return res.status(404).json({ message: 'Reclamação não encontrada.' });
+    if (![3, 4].includes(check.rows[0].status_id))
+      return res.status(403).json({ message: 'Só é possível avaliar reclamações concluídas (Resolvida ou Não Resolvida).' });
+
+    await pool.query(
+      `UPDATE reclamacao SET avaliacao = $1 WHERE id = $2`,
+      [Number(nota), id]
+    );
+    res.json({ message: 'Avaliação registrada com sucesso.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao registrar avaliação.' });
   }
 };

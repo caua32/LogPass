@@ -5,6 +5,7 @@ const reclamacaoController = require('../controllers/reclamacaoController');
 const {
   editarReclamacaoConsumidor,
   deletarReclamacaoConsumidor,
+  avaliarReclamacao,
 } = reclamacaoController;
 const verifyToken = require('../middleware/verifyToken');
 const validate = require('../middleware/validate');
@@ -24,7 +25,8 @@ router.post('/reclamacao', verifyToken, requireConsumidor, criarRules, validate,
 router.get('/reclamacao/empresa', verifyToken, requireEmpresa, reclamacaoController.getByEmpresa);
 router.get('/reclamacao/consumidor', verifyToken, requireConsumidor, reclamacaoController.getByConsumidor);
 router.put('/reclamacao/:id/status', verifyToken, requireAdmin, reclamacaoController.updateStatus);
-router.put('/reclamacao/:id',        verifyToken, requireConsumidor, editarReclamacaoConsumidor);
-router.delete('/reclamacao/:id',     verifyToken, requireConsumidor, deletarReclamacaoConsumidor);
+router.put('/reclamacao/:id',          verifyToken, requireConsumidor, editarReclamacaoConsumidor);
+router.delete('/reclamacao/:id',       verifyToken, requireConsumidor, deletarReclamacaoConsumidor);
+router.post('/reclamacao/:id/avaliacao', verifyToken, requireConsumidor, avaliarReclamacao);
 
 module.exports = router;
