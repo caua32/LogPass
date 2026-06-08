@@ -88,18 +88,18 @@ class _ChatPageState extends State<ChatPage> {
     final token = context.read<AuthProvider>().token!;
     try {
       if (imagem != null) {
-        await ApiService.enviarImagemChat(token, widget.reclamacaoId, imagem);
+        await ApiService.enviarImagemChat(token, widget.reclamacaoId, imagem, texto);
       } else {
         await ApiService.enviarMensagemChat(token, widget.reclamacaoId, texto);
       }
       await _carregarMensagens();
     } on ApiException catch (e) {
       if (!mounted) return;
-      if (imagem == null) _inputCtrl.text = texto;
+      _inputCtrl.text = texto;
       _showSnack(e.message);
     } catch (_) {
       if (!mounted) return;
-      if (imagem == null) _inputCtrl.text = texto;
+      _inputCtrl.text = texto;
       _showSnack('Erro ao enviar. Tente novamente.');
     }
     if (mounted) setState(() => _enviando = false);
@@ -289,8 +289,8 @@ class _ChatPageState extends State<ChatPage> {
                               fontSize: 11, fontWeight: FontWeight.bold)),
                     ),
 
-                  // Imagem ou texto
-                  if (imagemUrl != null)
+                  // Imagem (com legenda opcional) ou só texto
+                  if (imagemUrl != null) ...[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
@@ -311,8 +311,19 @@ class _ChatPageState extends State<ChatPage> {
                           child: const Icon(Icons.broken_image, color: _cyan),
                         ),
                       ),
-                    )
-                  else
+                    ),
+                    if (texto != null && texto.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Text(texto,
+                            style: const TextStyle(
+                                color: Color(0xFFE0F7F5),
+                                fontSize: 14,
+                                height: 1.4)),
+                      ),
+                    ],
+                  ] else
                     Text(texto ?? '',
                         style: const TextStyle(
                             color: Color(0xFFE0F7F5),

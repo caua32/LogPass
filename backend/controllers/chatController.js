@@ -195,11 +195,13 @@ exports.enviarImagem = async (req, res) => {
       stream.end(req.file.buffer);
     });
 
+    const legenda = (req.body.mensagem || '').trim() || null;
+
     const result = await pool.query(
-      `INSERT INTO mensagem_chat (reclamacao_id, remetente_id, remetente_tipo, imagem_url)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, remetente_id, remetente_tipo, imagem_url, created_at`,
-      [reclamacao_id, remetenteId, remetenteTipo, imagemUrl]
+      `INSERT INTO mensagem_chat (reclamacao_id, remetente_id, remetente_tipo, mensagem, imagem_url)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, remetente_id, remetente_tipo, mensagem, imagem_url, created_at`,
+      [reclamacao_id, remetenteId, remetenteTipo, legenda, imagemUrl]
     );
 
     res.status(201).json({ mensagem: result.rows[0] });

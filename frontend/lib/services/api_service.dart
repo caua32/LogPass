@@ -276,12 +276,13 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> enviarImagemChat(
-      String token, int reclamacaoId, XFile imagem) async {
+      String token, int reclamacaoId, XFile imagem, String mensagem) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$kBaseUrl/chat/$reclamacaoId/imagem'),
     );
     request.headers['Authorization'] = 'Bearer $token';
+    request.fields['mensagem'] = mensagem;
 
     // Detecta o tipo da imagem pela extensão para enviar contentType correto
     final ext = imagem.path.split('.').last.toLowerCase();
