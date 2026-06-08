@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import '../core/constants.dart';
 
 class ApiException implements Exception {
@@ -271,6 +272,19 @@ class ApiService {
         .timeout(_timeout);
     final body = _decode(res);
     return body['mensagens'] as List<dynamic>? ?? [];
+  }
+
+  static Future<Map<String, dynamic>> enviarImagemChat(
+      String token, int reclamacaoId, XFile imagem) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$kBaseUrl/chat/$reclamacaoId/imagem'),
+    );
+    request.headers['Authorization'] = 'Bearer $token';
+    request.files.add(await http.MultipartFile.fromPath('imagem', imagem.path));
+    final streamed = await request.send().timeout(_timeout);
+    final res = await http.Response.fromStream(streamed);
+    return _decode(res);
   }
 
   static Future<Map<String, dynamic>> enviarMensagemChat(

@@ -1,4 +1,5 @@
 const pool = require('../db');
+const cloudinary = require('cloudinary').v2;
 
 async function _verificarAcesso(reclamacaoId, usuarioId, tipo) {
   if (tipo === 'consumidor') {
@@ -35,7 +36,7 @@ exports.getMensagens = async (req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT m.id, m.remetente_id, m.remetente_tipo, m.mensagem, m.created_at,
+      `SELECT m.id, m.remetente_id, m.remetente_tipo, m.mensagem, m.imagem_url, m.created_at,
               CASE
                 WHEN m.remetente_tipo = 'consumidor' THEN c.nome
                 WHEN m.remetente_tipo = 'empresa' THEN e.nomeempresa
@@ -146,5 +147,64 @@ exports.enviarMensagem = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erro ao enviar mensagem.' });
+  }
+};
+
+exports.enviarImagem = async (req, res) => {
+  const { reclamacao_id } = req.params;
+  const usuarioId = req.user.id;
+  const tipo = req.user.tipo;
+  const isAdmin = req.user.role === 'admin';
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'Nenhuma imagem enviada.' });
+  }
+
+  try {
+    let remetenteId;
+    let remetenteTipo;
+
+    if (isAdmin) {
+      remetenteId = usuarioId;
+      remetenteTipo = 'admin';
+    } else {
+      const ok = await _verificarAcesso(reclamacao_id, usuarioId, tipo);
+      if (!ok) return res.status(403).json({ message: 'Acesso negado a esta reclamação.' });
+
+      remetenteTipo = tipo;
+      if (tipo === 'consumidor') {
+        const r = await pool.query('SELECT id FROM consumidor WHERE usuario_id = $1', [usuarioId]);
+        if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil não encontrado.' });
+        remetenteId = r.rows[0].id;
+      } else {
+        const r = await pool.query('SELECT id FROM empresa WHERE usuario_id = $1', [usuarioId]);
+        if (r.rows.length === 0) return res.status(400).json({ message: 'Perfil não encontrado.' });
+        remetenteId = r.rows[0].id;
+      }
+    }
+
+    // Upload para Cloudinary via stream
+    const imagemUrl = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'logpass/chat', resource_type: 'image' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    const result = await pool.query(
+      `INSERT INTO mensagem_chat (reclamacao_id, remetente_id, remetente_tipo, imagem_url)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, remetente_id, remetente_tipo, imagem_url, created_at`,
+      [reclamacao_id, remetenteId, remetenteTipo, imagemUrl]
+    );
+
+    res.status(201).json({ mensagem: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao enviar imagem.' });
   }
 };
