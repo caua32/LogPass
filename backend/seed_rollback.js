@@ -10,30 +10,51 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-async function limparCloudinary() {
+// Extrai o public_id de uma URL do Cloudinary
+// Ex: https://res.cloudinary.com/xxx/image/upload/v123/logpass/chat/abc.jpg → logpass/chat/abc
+function extrairPublicId(url) {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/);
+    return match ? match[1] : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function limparCloudinary(urls) {
   if (!process.env.CLOUDINARY_CLOUD_NAME) {
     console.log('⚠️  [0/5] Cloudinary não configurado no .env — pulando limpeza de imagens.');
     return;
   }
-  try {
-    // Apaga todas as imagens da pasta logpass/chat
-    await cloudinary.api.delete_resources_by_prefix('logpass/chat/');
-    // Remove a pasta vazia (ignora erro se não existir)
-    try { await cloudinary.api.delete_folder('logpass/chat'); } catch (_) {}
-    console.log('✅ [0/5] Imagens do chat removidas da Cloudinary');
-  } catch (err) {
-    console.log(`⚠️  [0/5] Falha ao limpar Cloudinary: ${err.message}`);
+  if (urls.length === 0) {
+    console.log('✅ [0/5] Nenhuma imagem para remover da Cloudinary.');
+    return;
   }
+  const publicIds = urls.map(extrairPublicId).filter(Boolean);
+  let removidas = 0;
+  for (const pid of publicIds) {
+    try {
+      const r = await cloudinary.uploader.destroy(pid, { invalidate: true });
+      if (r.result === 'ok') removidas++;
+      else console.log(`   ⚠️  ${pid} → ${r.result}`);
+    } catch (err) {
+      console.log(`   ⚠️  Falha ao remover ${pid}: ${err.message}`);
+    }
+  }
+  console.log(`✅ [0/5] ${removidas}/${publicIds.length} imagens removidas da Cloudinary`);
 }
 
 async function rollback() {
   console.log('🔄 Iniciando rollback — mantendo apenas usuários...\n');
 
-  // ─── 0. Imagens na Cloudinary (antes de apagar as URLs do banco) ──────────
-  await limparCloudinary();
-
   const client = await pool.connect();
   try {
+    // ─── 0. Imagens na Cloudinary (busca URLs antes de apagar) ────────────────
+    const imgs = await client.query(
+      `SELECT imagem_url FROM mensagem_chat WHERE imagem_url IS NOT NULL`
+    );
+    await limparCloudinary(imgs.rows.map(r => r.imagem_url));
+
     // ─── 1. Mensagens de chat ─────────────────────────────────────────────────
     const delMsg = await client.query(`DELETE FROM mensagem_chat`);
     console.log(`✅ [1/5] ${delMsg.rowCount} mensagens de chat removidas`);
