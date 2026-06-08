@@ -954,7 +954,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
 
   Widget _buildCardReclamacao(Reclamacao r, int index) {
     return GestureDetector(
-      onTap: () => context.go('/admin/reclamacao/${r.id}', extra: r),
+      onTap: () => context.push('/admin/reclamacao/${r.id}', extra: r),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(

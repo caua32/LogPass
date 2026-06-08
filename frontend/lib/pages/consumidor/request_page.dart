@@ -18,7 +18,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
   final _cnpjCtrl = TextEditingController();
   final _numeroPedidoCtrl = TextEditingController();
   final _motivoCtrl = TextEditingController();
-  String _tipo = 'troca';
+  String _tipo = 'Troca';
   bool _loading = false;
 
   late AnimationController _fadeCtrl;
@@ -113,7 +113,7 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
               Row(children: [
                 Icon(Icons.swap_horiz, size: 14, color: const Color(0xFF44CABD).withValues(alpha: 0.7)),
                 const SizedBox(width: 6),
-                Text('Tipo: ${_tipo == 'troca' ? 'Troca' : 'Reembolso'}',
+                Text('Tipo: $_tipo',
                     style: TextStyle(color: const Color(0xFF44CABD).withValues(alpha: 0.8), fontSize: 13)),
               ]),
             ]),
@@ -206,9 +206,9 @@ class _RequestPageState extends State<RequestPage> with SingleTickerProviderStat
                     titleIcon: Icons.swap_horiz,
                     children: [
                       Row(children: [
-                        Expanded(child: _buildTipoCard('troca', 'Troca', Icons.sync)),
+                        Expanded(child: _buildTipoCard('Troca', 'Troca', Icons.sync)),
                         const SizedBox(width: 10),
-                        Expanded(child: _buildTipoCard('reembolso', 'Reembolso', Icons.attach_money)),
+                        Expanded(child: _buildTipoCard('Reembolso', 'Reembolso', Icons.attach_money)),
                       ]),
                     ],
                   ),

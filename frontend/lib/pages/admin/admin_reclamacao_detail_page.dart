@@ -94,10 +94,99 @@ class _AdminReclamacaoDetailPageState
     }
   }
 
-  Future<void> _alterarStatus(int novoStatus) async {
+  void _confirmarEAlterar(int novoStatus) {
+    final comentarioCtrl = TextEditingController();
+    final nomeStatus = kStatusNomes[novoStatus] ?? 'novo status';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _dark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Alterar para "$nomeStatus"',
+          style: const TextStyle(
+              color: _cyan, fontSize: 15, fontWeight: FontWeight.w700),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Comentário para o solicitante (opcional)',
+                style: TextStyle(
+                    color: _cyan.withOpacity(0.65), fontSize: 12)),
+            const SizedBox(height: 8),
+            TextField(
+              controller: comentarioCtrl,
+              maxLines: 3,
+              style: const TextStyle(
+                  color: Color(0xFFE0F7F5), fontSize: 13),
+              decoration: InputDecoration(
+                hintText: 'Ex: Estamos analisando seu caso...',
+                hintStyle: TextStyle(
+                    color: _cyan.withOpacity(0.35), fontSize: 12),
+                filled: true,
+                fillColor: _bg,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide:
+                      BorderSide(color: _cyan.withOpacity(0.3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide:
+                      BorderSide(color: _cyan.withOpacity(0.2)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide:
+                      BorderSide(color: _cyan.withOpacity(0.6)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancelar',
+                style: TextStyle(color: _cyan.withOpacity(0.7))),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _cyan,
+              foregroundColor: _bg,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              elevation: 0,
+            ),
+            onPressed: () {
+              final comentario = comentarioCtrl.text.trim();
+              Navigator.pop(ctx);
+              _alterarStatus(novoStatus, comentario: comentario);
+            },
+            child: const Text('Confirmar',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _alterarStatus(int novoStatus, {String comentario = ''}) async {
     if (_token == null) return;
     try {
       await ApiService.updateReclamacaoStatus(_token!, _rec.id, novoStatus);
+
+      // Envia mensagem no chat com o status e comentário (ou mensagem automática)
+      final nomeStatus = kStatusNomes[novoStatus] ?? '';
+      final msgChat = comentario.isNotEmpty
+          ? '🔄 Status alterado para "$nomeStatus".\n\n$comentario'
+          : '🔄 Status alterado para "$nomeStatus".';
+      await ApiService.enviarMensagemChat(_token!, _rec.id, msgChat);
+
       if (mounted) {
         setState(() {
           _rec = Reclamacao(
@@ -110,18 +199,21 @@ class _AdminReclamacaoDetailPageState
             createdAt: _rec.createdAt,
           );
         });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Row(children: [
-            const Icon(Icons.check_circle_outline,
-                color: Color(0xFF0A1929), size: 16),
-            const SizedBox(width: 8),
-            Text('Status → ${kStatusNomes[novoStatus]}'),
-          ]),
-          backgroundColor: _cyan,
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ));
+        await _carregarMensagens();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Row(children: [
+              const Icon(Icons.check_circle_outline,
+                  color: Color(0xFF0A1929), size: 16),
+              const SizedBox(width: 8),
+              Text('Status → $nomeStatus'),
+            ]),
+            backgroundColor: _cyan,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8)),
+          ));
+        }
       }
     } on ApiException catch (e) {
       if (mounted) {
@@ -335,7 +427,7 @@ class _AdminReclamacaoDetailPageState
               final color = _statusColor(e.key);
               return Expanded(
                 child: GestureDetector(
-                  onTap: isActive ? null : () => _alterarStatus(e.key),
+                  onTap: isActive ? null : () => _confirmarEAlterar(e.key),
                   child: Container(
                     margin: EdgeInsets.only(
                         right: e.key < kStatusNomes.length ? 6 : 0),

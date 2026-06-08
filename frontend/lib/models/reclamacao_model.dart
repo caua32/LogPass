@@ -12,6 +12,7 @@ class Reclamacao {
   final int? avaliacao;
   final String? comentario;
   final String? ultimaRespostaEmpresa;
+  final String? formaSolucao;
 
   const Reclamacao({
     required this.id,
@@ -24,6 +25,7 @@ class Reclamacao {
     this.avaliacao,
     this.comentario,
     this.ultimaRespostaEmpresa,
+    this.formaSolucao,
   });
 
   String get statusNome => kStatusNomes[idStatus] ?? 'Desconhecido';
@@ -55,6 +57,7 @@ class Reclamacao {
       avaliacao: json['avaliacao'] as int?,
       comentario: json['comentario'] as String?,
       ultimaRespostaEmpresa: json['ultima_resposta_empresa']?.toString(),
+      formaSolucao: json['forma_solucao'] as String?,
     );
   }
 

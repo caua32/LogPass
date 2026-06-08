@@ -218,7 +218,10 @@ class _MinhasReclamacoesPageState extends State<MinhasReclamacoesPage>
     final formKey = GlobalKey<FormState>();
     final pedidoCtrl = TextEditingController(text: r.titulo);
     final motivoCtrl = TextEditingController(text: r.descricao);
-    String formaSolucao = 'Não Informado';
+    const _opcoesValidas = ['Não Informado', 'Troca', 'Reembolso'];
+    String formaSolucao = _opcoesValidas.contains(r.formaSolucao)
+        ? r.formaSolucao!
+        : 'Não Informado';
     bool salvando = false;
 
     showDialog(
