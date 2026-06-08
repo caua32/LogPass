@@ -15,7 +15,9 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) cb(null, true);
+    const extOk = /\.(jpe?g|png|gif|webp|heic|bmp)$/i.test(file.originalname || '');
+    const mimeOk = (file.mimetype || '').startsWith('image/');
+    if (mimeOk || extOk) cb(null, true);
     else cb(new Error('Apenas imagens são permitidas.'));
   },
 });
@@ -76,7 +78,11 @@ app.use('/api', chatRoutes(upload));
 
 // Handler de erros global
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error(err.stack || err.message || err);
+  // Erros de upload (Multer / filtro de arquivo) → 400 com mensagem clara
+  if (err instanceof multer.MulterError || /imagens são permitidas/.test(err.message || '')) {
+    return res.status(400).json({ message: err.message });
+  }
   res.status(500).json({ message: 'Erro interno do servidor.' });
 });
 

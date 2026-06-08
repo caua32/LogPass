@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import '../core/constants.dart';
 
@@ -281,7 +282,24 @@ class ApiService {
       Uri.parse('$kBaseUrl/chat/$reclamacaoId/imagem'),
     );
     request.headers['Authorization'] = 'Bearer $token';
-    request.files.add(await http.MultipartFile.fromPath('imagem', imagem.path));
+
+    // Detecta o tipo da imagem pela extensão para enviar contentType correto
+    final ext = imagem.path.split('.').last.toLowerCase();
+    final subtype = (ext == 'jpg' || ext == 'jpeg')
+        ? 'jpeg'
+        : (ext == 'png')
+            ? 'png'
+            : (ext == 'gif')
+                ? 'gif'
+                : (ext == 'webp')
+                    ? 'webp'
+                    : 'jpeg';
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'imagem',
+      imagem.path,
+      contentType: MediaType('image', subtype),
+    ));
     final streamed = await request.send().timeout(_timeout);
     final res = await http.Response.fromStream(streamed);
     return _decode(res);
