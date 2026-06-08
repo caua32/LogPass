@@ -353,11 +353,10 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildInput() {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16, right: 16, top: 12,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 12,
-      ),
+    return SafeArea(
+      top: false,
+      child: Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
         color: _card,
         border: Border(top: BorderSide(color: _cyan.withValues(alpha: 0.2))),
@@ -392,10 +391,9 @@ class _ChatPageState extends State<ChatPage> {
             maxLines: null,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.newline,
-            enabled: _imagemSelecionada == null,
             decoration: appInputDeco(
               _imagemSelecionada != null
-                  ? 'Imagem pronta para enviar...'
+                  ? 'Adicionar legenda (opcional)...'
                   : 'Digite uma mensagem...',
             ).copyWith(
               contentPadding:
@@ -437,6 +435,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ]),
+      ),
     );
   }
 
