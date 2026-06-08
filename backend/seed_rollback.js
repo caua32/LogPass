@@ -16,10 +16,17 @@ async function rollback() {
     const delRec = await client.query(`DELETE FROM reclamacao`);
     console.log(`✅ [2/4] ${delRec.rowCount} reclamações removidas`);
 
-    // ─── 3. Funcionários + permissões ─────────────────────────────────────────
-    const delPerm = await client.query(`DELETE FROM permissao_funcionario`);
-    const delFunc = await client.query(`DELETE FROM funcionario`);
-    console.log(`✅ [3/4] ${delFunc.rowCount} funcionários e ${delPerm.rowCount} permissões removidos`);
+    // ─── 3. Funcionários + permissões (preserva o admin) ─────────────────────
+    const delPerm = await client.query(
+      `DELETE FROM permissao_funcionario
+       WHERE funcionario_id IN (
+         SELECT id FROM funcionario WHERE email != 'admin@logpass.com'
+       )`
+    );
+    const delFunc = await client.query(
+      `DELETE FROM funcionario WHERE email != 'admin@logpass.com'`
+    );
+    console.log(`✅ [3/4] ${delFunc.rowCount} funcionários e ${delPerm.rowCount} permissões removidos (admin preservado)`);
 
     // ─── 4. Configurações do sistema ──────────────────────────────────────────
     const delCfg = await client.query(`DELETE FROM configuracao_sistema`);
