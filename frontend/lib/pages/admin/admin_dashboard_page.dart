@@ -1257,8 +1257,112 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                     color: tipoColor, fontSize: 10, fontWeight: FontWeight.w700),
               ),
             ),
+            const SizedBox(width: 6),
+            GestureDetector(
+              onTap: () => _confirmarExclusaoUsuario(u),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF6B6B).withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                      color: const Color(0xFFFF6B6B).withValues(alpha: 0.30)),
+                ),
+                child: const Icon(Icons.delete_outline,
+                    color: Color(0xFFFF6B6B), size: 18),
+              ),
+            ),
           ],
         ),
+    );
+  }
+
+  void _confirmarExclusaoUsuario(Map<String, dynamic> u) {
+    final tipo = u['tipo'] as String? ?? '';
+    final isEmpresa = tipo == 'empresa';
+    final nome = isEmpresa
+        ? (u['nomeempresa'] as String? ?? u['nome'] as String? ?? 'usuário')
+        : (u['nome'] as String? ?? 'usuário');
+    bool excluindo = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: _card,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            'Excluir Usuário',
+            style: TextStyle(
+                color: Color(0xFFFF6B6B),
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Tem certeza que deseja excluir "$nome"?\n\nEsta ação não pode ser desfeita e removerá todas as reclamações e mensagens vinculadas.',
+            style: TextStyle(color: _cyan.withValues(alpha: 0.8), height: 1.5),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancelar', style: TextStyle(color: _cyan)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6B6B),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: excluindo
+                  ? null
+                  : () async {
+                      setDialogState(() => excluindo = true);
+                      try {
+                        await ApiService.deletarAdminUsuario(
+                            _token!, u['id'] as int);
+                        if (!mounted) return;
+                        Navigator.pop(ctx);
+                        await _load();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: const Text('Usuário excluído com sucesso.'),
+                            backgroundColor: _cyan,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ));
+                        }
+                      } on ApiException catch (e) {
+                        setDialogState(() => excluindo = false);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(e.message),
+                            backgroundColor: const Color(0xFFFF6B6B),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                        }
+                      } catch (_) {
+                        setDialogState(() => excluindo = false);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Erro ao excluir. Tente novamente.'),
+                            backgroundColor: Color(0xFFFF6B6B),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                        }
+                      }
+                    },
+              child: excluindo
+                  ? const SizedBox(
+                      width: 16, height: 16,
+                      child: CircularProgressIndicator(
+                          color: Colors.white, strokeWidth: 2))
+                  : const Text('Excluir'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

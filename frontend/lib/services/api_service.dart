@@ -233,6 +233,14 @@ class ApiService {
     return body['usuarios'] as List<dynamic>? ?? [];
   }
 
+  static Future<void> deletarAdminUsuario(String token, int id) async {
+    final res = await http
+        .delete(Uri.parse('$kBaseUrl/admin/usuarios/$id'),
+            headers: _headers(token: token))
+        .timeout(_timeout);
+    _decode(res);
+  }
+
   static Future<Map<String, dynamic>> criarAdminUsuario(
       String token, Map<String, dynamic> dados) async {
     final res = await http

@@ -17,5 +17,6 @@ router.get('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioContro
 router.put('/admin/configuracoes',  verifyToken, requireAdmin, funcionarioController.updateConfiguracoes);
 router.get('/admin/usuarios',       verifyToken, requireAdmin, funcionarioController.getUsuarios);
 router.post('/admin/usuarios',      verifyToken, requireAdmin, funcionarioController.criarUsuario);
+router.delete('/admin/usuarios/:id', verifyToken, requireAdmin, funcionarioController.deletarUsuario);
 
 module.exports = router;
